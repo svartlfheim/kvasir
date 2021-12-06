@@ -1,0 +1,11 @@
+connections:
+    resource: ../src/Connections/Controller/API/V1/
+    type: annotation
+    prefix: '/api/v1/connections'
+    # this is added to the beginning of all imported route names
+    name_prefix: 'connections_api_v1_'
+    trailing_slash_on_root: false
+
+kernel:
+    resource: ../src/Kernel.php
+    type: annotation
