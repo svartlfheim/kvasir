@@ -1,11 +1,28 @@
 version: '3.5'
 
 services:
+
+  reverse-proxy:
+    image: traefik:v2.5
+    networks:
+      default:
+        aliases:
+          - kvasir.local
+    ports:
+      - "7777:7777"
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker/traefik/traefik.yaml:/traefik.yaml
+      - ./docker/traefik/traefik-dynamic-config.yaml:/traefik-dynamic-config.yaml
+      - ./certs:/certs
+
   nginx:
     build:
-      context: ./docker/nginx
-    ports:
-      - 8080:8080
+      context: ./docker/images/nginx
     environment:
       APP_ROOT: /opt/app-root/public
       LISTEN_PORT: 8080
@@ -13,10 +30,16 @@ services:
       PHP_FPM_PORT: 9000
     volumes:
       - "./api:/opt/app-root"
+    labels:
+      - "traefik.http.routers.nginx.rule=Host(`kvasir.local`)"
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.entrypoints=web"
+      - "traefik.http.services.nginx.loadbalancer.server.port=8080"
+      - "traefik.http.routers.nginx.tls=true"
 
   phpfpm:
     build:
-      context: ./docker/php-fpm
+      context: ./docker/images/php-fpm
       target: dev
     working_dir: /opt/app-root/
     environment:

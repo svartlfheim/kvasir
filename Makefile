@@ -1,4 +1,6 @@
 PROJECT_NAME=kvasir
+MINICA_IMAGE_NAME=kvasir_minica:latest
+DOCKER_IMAGES_DIR=./docker/images
 DOCKER_COMPOSE=docker compose -f ./docker-compose.yml --project-name="$(PROJECT_NAME)_dev"
 
 ifndef REGISTRY
@@ -29,14 +31,14 @@ help: ## This help dialog.
 
 .PHONY: build-nginx
 build-nginx: ## Builds the NGiNX image
-	docker build -t ${REGISTRY}/nginx:${TAG} ./docker/nginx
+	docker build -t ${REGISTRY}/nginx:${TAG} ${DOCKER_IMAGES_DIR}/nginx
 
 .PHONY: build-php-fpm
 build-php-fpm: ## Builds the php-fpm images (including cron and dev variants)
-	docker build --target php-fpm -t ${REGISTRY}/php-fpm:${TAG} ./docker/php-fpm
-	docker build --target cron -t ${REGISTRY}/php-fpm:cron-${TAG} ./docker/php-fpm
-	docker build --target dev -t ${REGISTRY}/php-fpm/dev:${TAG} ./docker/php-fpm
-	docker build --target cron-dev -t ${REGISTRY}/php-fpm/dev:cron-${TAG} ./docker/php-fpm
+	docker build --target php-fpm -t ${REGISTRY}/php-fpm:${TAG} ${DOCKER_IMAGES_DIR}/php-fpm
+	docker build --target cron -t ${REGISTRY}/php-fpm:cron-${TAG} ${DOCKER_IMAGES_DIR}/php-fpm
+	docker build --target dev -t ${REGISTRY}/php-fpm/dev:${TAG} ${DOCKER_IMAGES_DIR}/php-fpm
+	docker build --target cron-dev -t ${REGISTRY}/php-fpm/dev:cron-${TAG} ${DOCKER_IMAGES_DIR}/php-fpm
 
 .PHONY: local-build
 local-build: ## Builds all images required by the local docker-compose environment
@@ -56,3 +58,23 @@ down: ## Stops the local docker-compose environment
 
 .PHONY: reset
 reset: down local-build up ## Destroys the environment, rebuilds all images, and starts up again
+
+.PHONY: init
+init: gen-certs tls-trust-ca rm-minica-image ## Initialises the environment, run this when you first clone the repo
+
+.PHONY: build-minica-image
+build-minica-image: ## Builds the minica docker image, used for generating tls certs locally
+	docker build -t ${MINICA_IMAGE_NAME} ${DOCKER_IMAGES_DIR}/minica
+
+.PHONY: rm-minica-image
+rm-minica-image: ## Removes the minica docker image
+	docker rmi ${MINICA_IMAGE_NAME}
+
+.PHONY: gen-certs
+gen-certs: build-minica-image ## Generates the certificates used locally
+	git clean -fxd certs/*
+	docker run -v "$(shell pwd)/certs:/srv" -w /srv --rm ${MINICA_IMAGE_NAME} minica --domains kvasir.local
+
+.PHONY: tls-trust-ca
+tls-trust-ca: ## Trust the self-signed HTTPS certification
+	sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "./certs/minica.pem"
