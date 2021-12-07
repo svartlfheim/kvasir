@@ -8,6 +8,9 @@ RUN apt-get install -y git
 # Require for symfony validators
 RUN apt-get install -y libicu-dev && docker-php-ext-configure intl && docker-php-ext-install intl
 
+# Required for composer (prevents warnings)
+RUN apt-get install -y libzip-dev zip unzip && docker-php-ext-install zip
+
 # Cleanup some files...probably needs to be more thorough
 RUN apt-get clean all -y
 

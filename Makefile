@@ -56,6 +56,13 @@ exec: ## Open a shell in the php service (for running console commands and such)
 down: ## Stops the local docker-compose environment
 	$(DOCKER_COMPOSE) down
 
+.PHONY: apiutest
+apiutest: ## Run unit tests for API
+	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite unit
+
+.PHONY: restart
+restart: down up ## Destroys the environment and then starts it
+
 .PHONY: reset
 reset: down local-build up ## Destroys the environment, rebuilds all images, and starts up again
 
