@@ -11,6 +11,18 @@ if [ "$EXIT_CODE" != "0" ]; then
     echo "Commit aborted!"
     echo ""
     echo "Pre-commit linting check failed, please run: make lint"
+    exit 1
 fi
 
-exit $EXIT_CODE
+make api-stan > /dev/null 2>&1
+
+EXIT_CODE="$?"
+
+if [ "$EXIT_CODE" != "0" ]; then
+    echo "Commit aborted!"
+    echo ""
+    echo "Pre-commit api phpstan check failed, please run: make api-stan"
+    exit 1
+fi
+
+exit 0
