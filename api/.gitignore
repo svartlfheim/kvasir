@@ -1,3 +1,6 @@
+#> manual entries #
+.php-cs-fixer.cache
+#< manual entries #
 
 ###> symfony/framework-bundle ###
 /.env.local

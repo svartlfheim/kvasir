@@ -56,9 +56,20 @@ exec: ## Open a shell in the php service (for running console commands and such)
 down: ## Stops the local docker-compose environment
 	$(DOCKER_COMPOSE) down
 
-.PHONY: apiutest
-apiutest: ## Run unit tests for API
+.PHONY: api-utest
+api-utest: ## Run unit tests for API
 	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite unit
+
+.PHONY: api-lint
+api-lint: ## Run cs fixer on api codebase
+	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run
+
+.PHONY: lint
+lint: api-lint ## Run all linters for the repo
+
+.PHONY: api-csfix
+api-csfix: ## Run cs fixer on api codebase
+	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
 
 .PHONY: restart
 restart: down up ## Destroys the environment and then starts it
@@ -67,7 +78,7 @@ restart: down up ## Destroys the environment and then starts it
 reset: down local-build up ## Destroys the environment, rebuilds all images, and starts up again
 
 .PHONY: init
-init: gen-certs tls-trust-ca rm-minica-image ## Initialises the environment, run this when you first clone the repo
+init: cp-env gen-certs tls-trust-ca rm-minica-image ## Initialises the environment, run this when you first clone the repo
 
 .PHONY: build-minica-image
 build-minica-image: ## Builds the minica docker image, used for generating tls certs locally
@@ -82,6 +93,14 @@ gen-certs: build-minica-image ## Generates the certificates used locally
 	git clean -fxd certs/*
 	docker run -v "$(shell pwd)/certs:/srv" -w /srv --rm ${MINICA_IMAGE_NAME} minica --domains kvasir.local
 
+.PHONY: cp-env
+cp-env: ## Copy the .env.example to .env ready for use
+	if [ ! -f ./.env ]; then cp ./.env.example ./.env; fi;
+
 .PHONY: tls-trust-ca
 tls-trust-ca: ## Trust the self-signed HTTPS certification
 	sudo security add-trusted-cert -d -r trustRoot -k "/Library/Keychains/System.keychain" "./certs/minica.pem"
+
+.PHONY: setup-hooks
+setup-hooks: ## Sets up the default git hooks stored in ./hooks
+	git config core.hooksPath $(shell pwd)/hooks

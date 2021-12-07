@@ -1,0 +1,14 @@
+{
+    "name": "kvasir/php-cs-fixer",
+    "description": "Standalone install of cs fixer",
+    "autoload": {},
+    "require": {
+        "friendsofphp/php-cs-fixer": "dev-improvement/symfony-6 as 3.3.2"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/derrabus/PHP-CS-Fixer"
+        }
+    ]
+}

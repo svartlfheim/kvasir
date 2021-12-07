@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DefaultController
 {
-	#[Route('', name: 'list')]
-	public function index(): JsonResponse 
-	{
-		return new JsonResponse(['hello' => 'world']);
-	}
+    #[Route('', name: 'list')]
+    public function index(): JsonResponse
+    {
+        return new JsonResponse(['hello' => 'world']);
+    }
 }

@@ -10,7 +10,7 @@ class DefaultControllerTest extends TestCase
 {
     public function testResponse(): void
     {
-        $ctrl = new DefaultController;
+        $ctrl = new DefaultController();
 
         $this->assertEquals(
             new JsonResponse(["hello" => "world"]),
