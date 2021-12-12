@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Connections\DTO\API\V1;
+namespace App\Connections\DTO\V1;
 
 use App\Common\DTO\FromRequest;
 use Symfony\Component\HttpFoundation\Request;
+use App\Connections\DTO\ListConnectionsInterface;
 
-class ListConnectionsDTO implements FromRequest
+class ListConnections implements FromRequest, ListConnectionsInterface
 {
     protected $limit;
 

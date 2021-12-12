@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Unit\Connections\DTO\API\V1;
+namespace App\Tests\Unit\Connections\DTO\V1;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use App\Connections\DTO\API\V1\ListConnectionsDTO;
+use App\Connections\DTO\V1\ListConnections;
 
-class ListConnectionsDTOTest extends TestCase
+class ListConnectionsTest extends TestCase
 {
     public function testLimitIsRetrievedFromRequest(): void
     {
@@ -16,7 +16,7 @@ class ListConnectionsDTOTest extends TestCase
             ->with('limit')
             ->willReturn(30);
 
-        $dto = ListConnectionsDTO::fromRequest($requestMock);
+        $dto = ListConnections::fromRequest($requestMock);
 
         $this->assertEquals(30, $dto->getLimit());
     }
@@ -29,7 +29,7 @@ class ListConnectionsDTOTest extends TestCase
             ->with('limit')
             ->willReturn(null);
 
-        $dto = ListConnectionsDTO::fromRequest($requestMock);
+        $dto = ListConnections::fromRequest($requestMock);
 
         $this->assertEquals(20, $dto->getLimit());
     }

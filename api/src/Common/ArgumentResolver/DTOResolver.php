@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 
+// Hooked up in services.yaml
+// See: https://symfony.com/doc/current/controller/argument_value_resolver.html#adding-a-custom-value-resolver
 class DTOResolver implements ArgumentValueResolverInterface
 {
     protected Request $request;
