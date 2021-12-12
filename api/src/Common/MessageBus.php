@@ -30,7 +30,10 @@ class MessageBus implements MessageBusInterface
     {
         $res = $this->bus->dispatch($message, $stamps);
 
-        return $res->last(HandledStamp::class)->getResult();
+        /** @var HandledStamp */
+        $stamp = $res->last(HandledStamp::class);
+
+        return $stamp->getResult();
     }
 
     public function dispatch(object $message, array $stamps = []): Envelope
