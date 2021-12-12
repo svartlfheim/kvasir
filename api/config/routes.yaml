@@ -1,5 +1,5 @@
 connections:
-    resource: ../src/Connections/Controller/API/V1/
+    resource: ../src/Connections/Controller/
     type: annotation
     prefix: '/api/v1/connections'
     # this is added to the beginning of all imported route names

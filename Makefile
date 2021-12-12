@@ -68,7 +68,7 @@ api-lint: ## Run cs fixer on api codebase
 lint: api-lint ## Run all linters for the repo
 
 .PHONY: api-stan
-api-stan:
+api-stan: ## Run the phpstan analysis on src
 	$(DOCKER_COMPOSE) exec phpfpm vendor/bin/phpstan analyse src
 
 .PHONY: api-csfix
