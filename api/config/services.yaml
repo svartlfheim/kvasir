@@ -25,29 +25,6 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     app.dto_resolver:
-        class: App\Common\ArgumentResolver\DTOResolver
+        class: App\Common\ArgumentResolver\CommandResolver
         tags:
             - { name: controller.argument_value_resolver, priority: 50 }
-
-    app.bus.handler.connections.create:
-        class: App\Connections\Handler\CreateConnection
-
-    app.bus.handler.connections.list:
-        class: App\Connections\Handler\ListConnections
-
-    app.bus.handler.locator:
-        class: Symfony\Component\DependencyInjection\ServiceLocator
-        tags: ['container.service_locator']
-        arguments:
-            -
-                App\Connections\Command\CreateConnection: '@app.bus.handler.connections.create'
-                App\Connections\Command\ListConnections: '@app.bus.handler.connections.list'
-
-    Symfony\Component\DependencyInjection\ServiceLocator:
-        alias: app.bus.handler.locator
-    
-    app.bus:
-        class: App\Common\Bus\CommandBus
-        arguments: 
-            - '@app.bus.handler.locator'
-

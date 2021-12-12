@@ -2,13 +2,13 @@
 
 namespace App\Connections\Handler;
 
-use App\Connections\Command\CreateConnection as Command;
+use App\Connections\Command\CreateConnectionInterface;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
-class CreateConnection
+class CreateConnection implements MessageHandlerInterface
 {
-    public function handle(Command $cmd)
+    public function __invoke(CreateConnectionInterface $cmd)
     {
-        dump("handling command...");
-        dump($cmd);
+        return 'blah';
     }
 }

@@ -3,25 +3,29 @@
 namespace App\Tests\Unit\Connections\Controller;
 
 use PHPUnit\Framework\TestCase;
-use App\Connections\DTO\V1\ListConnections;
-use App\Connections\DTO\V1\CreateConnection;
+use App\Connections\Command\V1\ListConnections;
 use App\Connections\Controller\ApiV1Controller;
+use App\Connections\Command\V1\CreateConnection;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Common\MessageBusInterface;
 
 class ApiV1ControllerTest extends TestCase
 {
     public function testListConnections(): void
     {
         $dtoMock = $this->createMock(ListConnections::class);
-        $dtoMock->expects($this->once())
-            ->method('getLimit')
-            ->willReturn(30);
 
-        $ctrl = new ApiV1Controller();
+        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $messageBusMock->expects($this->once())
+            ->method('dispatchAndGetResult')
+            ->with($dtoMock, [])
+            ->willReturn(['some' => 'data']);
+
+        $ctrl = new ApiV1Controller($messageBusMock);
 
         $this->assertEquals(
             new JsonResponse([
-                'limit' => 30,
+                'some' => 'data',
             ]),
             $ctrl->index($dtoMock),
         );
@@ -30,19 +34,18 @@ class ApiV1ControllerTest extends TestCase
     public function testCreateConnection(): void
     {
         $dtoMock = $this->createMock(CreateConnection::class);
-        $dtoMock->expects($this->once())
-            ->method('getName')
-            ->willReturn('my-conn-name');
-        $dtoMock->expects($this->once())
-            ->method('getEngine')
-            ->willReturn('my-engine-name');
 
-        $ctrl = new ApiV1Controller();
+        $messageBusMock = $this->createMock(MessageBusInterface::class);
+        $messageBusMock->expects($this->once())
+            ->method('dispatchAndGetResult')
+            ->with($dtoMock, [])
+            ->willReturn(['some' => 'data']);
+
+        $ctrl = new ApiV1Controller($messageBusMock);
 
         $this->assertEquals(
             new JsonResponse([
-                'chosen_name' => 'my-conn-name',
-                'chosen_engine' => 'my-engine-name',
+                'some' => 'data',
             ]),
             $ctrl->create($dtoMock),
         );

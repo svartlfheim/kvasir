@@ -1,13 +1,23 @@
 <?php
 
-namespace App\Tests\Unit\Connections\DTO\V1;
+namespace App\Tests\Unit\Connections\Command\V1;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use App\Connections\DTO\V1\ListConnections;
+use App\Connections\Command\V1\ListConnections;
+use App\Connections\Command\ListConnectionsInterface;
 
 class ListConnectionsTest extends TestCase
 {
+    public function testImplementsVersionAgnosticInterface(): void
+    {
+        $requestMock = $this->createMock(Request::class);
+
+        $dto = ListConnections::fromRequest($requestMock);
+
+        $this->assertInstanceOf(ListConnectionsInterface::class, $dto);
+    }
+
     public function testLimitIsRetrievedFromRequest(): void
     {
         $requestMock = $this->createMock(Request::class);

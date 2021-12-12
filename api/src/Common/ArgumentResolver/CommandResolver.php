@@ -2,15 +2,19 @@
 
 namespace App\Common\ArgumentResolver;
 
-use App\Common\DTO\FromRequest;
+use App\Common\Command\FromRequestInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 
-// Hooked up in services.yaml
-// See: https://symfony.com/doc/current/controller/argument_value_resolver.html#adding-a-custom-value-resolver
-class DTOResolver implements ArgumentValueResolverInterface
+/**
+ * Hooked up in services.yaml
+ * We use this to automatically convert a request to a command for controllers
+ *
+ * See: https://symfony.com/doc/current/controller/argument_value_resolver.html#adding-a-custom-value-resolver
+*/
+class CommandResolver implements ArgumentValueResolverInterface
 {
     protected Request $request;
 
@@ -23,7 +27,7 @@ class DTOResolver implements ArgumentValueResolverInterface
      */
     public function supports(Request $request, ArgumentMetadata $argument): bool
     {
-        return is_subclass_of($argument->getType(), FromRequest::class);
+        return is_subclass_of($argument->getType(), FromRequestInterface::class);
     }
 
     /**

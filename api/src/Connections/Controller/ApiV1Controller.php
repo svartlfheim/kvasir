@@ -2,45 +2,38 @@
 
 namespace App\Connections\Controller;
 
-use App\Common\Bus\CommandBus;
-use App\Connections\DTO\V1\ListConnections;
-use App\Connections\DTO\V1\CreateConnection;
+use App\Common\RequiresMessageBus;
+use App\Common\MessageBusInterface;
+use App\Connections\Command\V1\ListConnections;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Connections\Command\V1\CreateConnection;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
+use App\Connections\API\ListConnectionsJSONResponseBuilder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Connections\Command\CreateConnection as CreateConnectionCommand;
-use App\Connections\Command\ListConnections as ListConnectionsCommand;
 
+/**
+ * This controller uses a prefix...
+ *
+ * @see /config/routes/annotations.yaml
+ */
 class ApiV1Controller extends AbstractController
 {
-    protected CommandBus $bus;
+    use RequiresMessageBus;
 
-    public function __construct(CommandBus $bus)
-    {
-        $this->bus = $bus;
-    }
-
-    /*
-    Not sure where to put the HEAD reqeust for list and create...
-    Will look into this later, likely to cause some weird behaviour...
-    */
     #[Route('', name: 'list', methods: ['GET', 'HEAD'])]
-    public function index(ListConnections $dto): JsonResponse
+    public function index(ListConnections $cmd, ListConnectionsJSONResponseBuilder $responseBuilder): JsonResponse
     {
-        $this->bus->dispatch(new ListConnectionsCommand($dto));
-        return new JsonResponse([
-            'limit' => $dto->getLimit(),
-        ]);
+        return $responseBuilder->fromCommandResponse(
+            $this->bus->dispatchAndGetResult($cmd)
+        );
     }
 
     #[Route('', name: 'create', methods: ['POST', 'HEAD'])]
-    public function create(CreateConnection $dto): JsonResponse
+    public function create(CreateConnection $cmd): JsonResponse
     {
-        $this->bus->dispatch(new CreateConnectionCommand($dto));
+        $res = $this->bus->dispatchAndGetResult($cmd);
 
-        return new JsonResponse([
-            'chosen_name' => $dto->getName(),
-            'chosen_engine' => $dto->getEngine(),
-        ]);
+        return new JsonResponse($res);
     }
 }

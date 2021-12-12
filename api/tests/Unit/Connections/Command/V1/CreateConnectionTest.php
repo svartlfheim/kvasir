@@ -1,13 +1,23 @@
 <?php
 
-namespace App\Tests\Unit\Connections\DTO\V1;
+namespace App\Tests\Unit\Connections\Command\V1;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use App\Connections\DTO\V1\CreateConnection;
+use App\Connections\Command\V1\CreateConnection;
+use App\Connections\Command\CreateConnectionInterface;
 
 class CreateConnectionTest extends TestCase
 {
+    public function testImplementsVersionAgnosticInterface(): void
+    {
+        $requestMock = $this->createMock(Request::class);
+
+        $dto = CreateConnection::fromRequest($requestMock);
+
+        $this->assertInstanceOf(CreateConnectionInterface::class, $dto);
+    }
+
     public function testAllValuesAreRetrievedFromRequest(): void
     {
         $requestMock = $this->createMock(Request::class);

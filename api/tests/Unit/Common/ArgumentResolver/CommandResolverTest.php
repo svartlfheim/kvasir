@@ -3,14 +3,14 @@
 namespace App\Tests\Unit\Common\ArgumentResolver;
 
 use PHPUnit\Framework\TestCase;
-use App\Common\ArgumentResolver\DTOResolver;
+use App\Common\ArgumentResolver\CommandResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use App\Tests\Unit\Common\ArgumentResolver\Stubs\ImplementsFromRequest;
 use App\Tests\Unit\Common\ArgumentResolver\Stubs\DoesNotImplementFromRequest;
 
-class DTOResolverTest extends TestCase
+class CommandResolverTest extends TestCase
 {
     public function testSupportsForMatchingClass(): void
     {
@@ -24,7 +24,7 @@ class DTOResolverTest extends TestCase
             ->method('getType')
             ->willReturn(ImplementsFromRequest::class);
 
-        $resolver = new DTOResolver($requestStackMock);
+        $resolver = new CommandResolver($requestStackMock);
         $this->assertTrue(
             $resolver->supports($requestMock, $argumentMock)
         );
@@ -42,7 +42,7 @@ class DTOResolverTest extends TestCase
             ->method('getType')
             ->willReturn(DoesNotImplementFromRequest::class);
 
-        $resolver = new DTOResolver($requestStackMock);
+        $resolver = new CommandResolver($requestStackMock);
         $this->assertFalse(
             $resolver->supports($requestMock, $argumentMock)
         );
@@ -60,7 +60,7 @@ class DTOResolverTest extends TestCase
             ->method('getType')
             ->willReturn(ImplementsFromRequest::class);
 
-        $resolver = new DTOResolver($requestStackMock);
+        $resolver = new CommandResolver($requestStackMock);
         $iterator = $resolver->resolve($requestMock, $argumentMock);
         $iteratorArray = iterator_to_array($iterator);
 
