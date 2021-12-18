@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Common\ArgumentResolver;
 
-use PHPUnit\Framework\TestCase;
+use App\Tests\Unit\TestCase;
 use App\Common\ArgumentResolver\CommandResolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;

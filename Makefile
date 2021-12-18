@@ -11,6 +11,12 @@ ifndef TAG
 	TAG=local
 endif
 
+# This is a generice argument allowing us to pass args to tasks
+# This won't always be used
+ifndef ARGS
+	ARGS=""
+endif
+
 # This is a combination of the following suggestions:
 # https://gist.github.com/prwhite/8168133#gistcomment-1420062
 help: ## This help dialog.
@@ -58,7 +64,7 @@ down: ## Stops the local docker-compose environment
 
 .PHONY: api-utest
 api-utest: ## Run unit tests for API
-	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite unit
+	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite unit $(ARGS)
 
 .PHONY: api-lint
 api-lint: ## Run cs fixer on api codebase

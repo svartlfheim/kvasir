@@ -2,12 +2,14 @@
 
 namespace App\Tests\Unit\Connections\Controller;
 
-use PHPUnit\Framework\TestCase;
+use App\Tests\Unit\TestCase;
+use App\Common\MessageBusInterface;
 use App\Connections\Command\V1\ListConnections;
 use App\Connections\Controller\ApiV1Controller;
 use App\Connections\Command\V1\CreateConnection;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Common\MessageBusInterface;
+use App\Connections\API\ListConnectionsJSONResponseBuilder;
+use App\Connections\Handler\Response\ListConnectionsResponse;
 
 class ApiV1ControllerTest extends TestCase
 {
@@ -15,19 +17,25 @@ class ApiV1ControllerTest extends TestCase
     {
         $dtoMock = $this->createMock(ListConnections::class);
 
-        $messageBusMock = $this->createMock(MessageBusInterface::class);
-        $messageBusMock->expects($this->once())
+        $mockCommandResponse = $this->createMock(ListConnectionsResponse::class);
+        $mockResponseBuilder = $this->createMock(ListConnectionsJSONResponseBuilder::class);
+        $mockResponseBuilder->expects($this->once())
+            ->method('fromCommandResponse')
+            ->with($mockCommandResponse)
+            ->willReturn(new JsonResponse(['some'=> 'data'], 200));
+
+        $mockMessageBus = $this->createMock(MessageBusInterface::class);
+        $mockMessageBus->expects($this->once())
             ->method('dispatchAndGetResult')
             ->with($dtoMock, [])
-            ->willReturn(['some' => 'data']);
+            ->willReturn($mockCommandResponse);
 
-        $ctrl = new ApiV1Controller($messageBusMock);
+        $ctrl = new ApiV1Controller();
+        $ctrl->withMessageBus($mockMessageBus);
 
         $this->assertEquals(
-            new JsonResponse([
-                'some' => 'data',
-            ]),
-            $ctrl->index($dtoMock),
+            new JsonResponse(['some'=> 'data'], 200),
+            $ctrl->index($dtoMock, $mockResponseBuilder),
         );
     }
 
@@ -35,13 +43,14 @@ class ApiV1ControllerTest extends TestCase
     {
         $dtoMock = $this->createMock(CreateConnection::class);
 
-        $messageBusMock = $this->createMock(MessageBusInterface::class);
-        $messageBusMock->expects($this->once())
+        $mockMessageBus = $this->createMock(MessageBusInterface::class);
+        $mockMessageBus->expects($this->once())
             ->method('dispatchAndGetResult')
             ->with($dtoMock, [])
             ->willReturn(['some' => 'data']);
 
-        $ctrl = new ApiV1Controller($messageBusMock);
+        $ctrl = new ApiV1Controller();
+        $ctrl->withMessageBus($mockMessageBus);
 
         $this->assertEquals(
             new JsonResponse([

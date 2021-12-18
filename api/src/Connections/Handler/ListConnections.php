@@ -14,7 +14,6 @@ class ListConnections implements MessageHandlerInterface
     public function __invoke(ListConnectionsInterface $cmd): ListConnectionsResponse
     {
         $pagination = (new PaginationData())
-            ->withFilters([])
             ->withOrderBy('name', 'ASC');
 
         return new ListConnectionsResponse(

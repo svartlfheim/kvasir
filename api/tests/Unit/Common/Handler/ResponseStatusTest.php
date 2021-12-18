@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Common\Handler;
 
-use PHPUnit\Framework\TestCase;
+use App\Tests\Unit\TestCase;
 use App\Common\Handler\ResponseStatus;
 
 class ResponseStatusTest extends TestCase

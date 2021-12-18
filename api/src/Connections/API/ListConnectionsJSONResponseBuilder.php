@@ -27,10 +27,16 @@ class ListConnectionsJSONResponseBuilder
 
     protected function buildResponseData(ListConnectionsResponse $resp): JSONSerializableInterface
     {
-        $data = [];
+        $connList = $resp->getConnections();
 
-        foreach ($resp->getConnections() as $conn) {
-            $version = $resp->getCommand()->version();
+        if ($connList->isEmpty()) {
+            return new ArrayData([]);
+        }
+
+        $data = [];
+        $version = $resp->getCommand()->version();
+
+        foreach ($connList as $conn) {
             $data[] = $this->serializeConnectionForVersion($version, $conn);
         }
 

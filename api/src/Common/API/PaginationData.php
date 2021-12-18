@@ -6,7 +6,7 @@ class PaginationData implements JSONSerializableInterface
 {
     protected ?string $nextToken = null;
     protected ?string $prevToken = null;
-    protected ?array $filters = null;
+    protected ?array $filters = [];
     protected ?string $orderBy = null;
     protected ?string $orderDirection = null;
 

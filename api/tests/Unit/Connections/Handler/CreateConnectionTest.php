@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Connections\Handler;
 
-use PHPUnit\Framework\TestCase;
+use App\Tests\Unit\TestCase;
 use App\Connections\Handler\CreateConnection;
 use App\Connections\Command\CreateConnectionInterface;
 
