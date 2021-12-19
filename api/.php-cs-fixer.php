@@ -10,6 +10,11 @@ return $config->setRules([
         '@PSR12' => true,
         // 'strict_param' => false,
         'array_syntax' => ['syntax' => 'short'],
+        // 'no_unused_imports' => true,
+        // 'order_imports' => true,
+        // 'ordered_traits' => true,
+        // 'void_return' => true,
+
     ])
     ->setFinder($finder)
 ;

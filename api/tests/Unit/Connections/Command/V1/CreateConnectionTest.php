@@ -13,9 +13,22 @@ class CreateConnectionTest extends TestCase
     {
         $requestMock = $this->createMock(Request::class);
 
-        $dto = CreateConnection::fromRequest($requestMock);
+        $cmd = CreateConnection::fromRequest($requestMock);
 
-        $this->assertInstanceOf(CreateConnectionInterface::class, $dto);
+        $this->assertInstanceOf(CreateConnectionInterface::class, $cmd);
+    }
+
+    public function testVersionIs1(): void
+    {
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(['name'], ['engine'])
+            ->willReturnOnConsecutiveCalls('my-conn-name', 'my-engine-name');
+
+        $cmd = CreateConnection::fromRequest($requestMock);
+
+        $this->assertEquals(1, $cmd->version());
     }
 
     public function testAllValuesAreRetrievedFromRequest(): void
@@ -26,13 +39,13 @@ class CreateConnectionTest extends TestCase
             ->withConsecutive(['name'], ['engine'])
             ->willReturnOnConsecutiveCalls('my-conn-name', 'my-engine-name');
 
-        $dto = CreateConnection::fromRequest($requestMock);
+        $cmd = CreateConnection::fromRequest($requestMock);
 
-        $this->assertEquals('my-conn-name', $dto->getName());
-        $this->assertEquals('my-engine-name', $dto->getEngine());
+        $this->assertEquals('my-conn-name', $cmd->getName());
+        $this->assertEquals('my-engine-name', $cmd->getEngine());
     }
 
-    public function testLimitIsDefaultedTo20(): void
+    public function testDefaults(): void
     {
         $requestMock = $this->createMock(Request::class);
         $requestMock->expects($this->exactly(2))
@@ -40,9 +53,9 @@ class CreateConnectionTest extends TestCase
             ->withConsecutive(['name'], ['engine'])
             ->willReturnOnConsecutiveCalls(null, null);
 
-        $dto = CreateConnection::fromRequest($requestMock);
+        $cmd = CreateConnection::fromRequest($requestMock);
 
-        $this->assertEquals('', $dto->getName());
-        $this->assertEquals('', $dto->getEngine());
+        $this->assertEquals('', $cmd->getName());
+        $this->assertEquals('', $cmd->getEngine());
     }
 }

@@ -28,12 +28,13 @@ trait BuildsJSONResponse
     /**
      * We'll need to deal with headers at some point...
      */
-    protected function jsonResponse(JSONSerializableInterface $metadata, JSONSerializableInterface $data, ResponseStatus $status): JsonResponse
+    protected function jsonResponse(JSONSerializableInterface $metadata, ?JSONSerializableInterface $data, JSONSerializableInterface $errors, ResponseStatus $status): JsonResponse
     {
         return new JsonResponse(
             [
                 'meta' => $metadata->toJSON(),
-                'data' => $data->toJSON(),
+                'data' => $data !== null ? $data->toJSON() : null,
+                'errors' => $errors->toJSON(),
             ],
             $this->httpStatusCode($status),
         );

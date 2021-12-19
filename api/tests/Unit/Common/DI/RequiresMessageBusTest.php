@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Tests\Unit\Common;
+namespace App\Tests\Unit\Common\DI;
 
 use ReflectionObject;
 use App\Tests\Unit\TestCase;
-use App\Common\RequiresMessageBus;
+use App\Common\DI\RequiresMessageBus;
 use App\Common\MessageBusInterface;
 
 class RequiresMessageBusTest extends TestCase

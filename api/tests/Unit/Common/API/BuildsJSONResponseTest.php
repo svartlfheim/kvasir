@@ -11,6 +11,22 @@ use App\Tests\Unit\Common\API\Stubs\BuildsJSONResponseTestTarget;
 
 class BuildsJSONResponseTest extends TestCase
 {
+    public function buildJSONSerializableObject(array $data = []): JSONSerializableInterface
+    {
+        return new class ($data) implements JSONSerializableInterface {
+            protected array $return;
+
+            public function __construct(array $return)
+            {
+                $this->return = $return;
+            }
+
+            public function toJSON(): array
+            {
+                return $this->return;
+            }
+        };
+    }
     public function testTheSupportedResponseStatuses(): void
     {
         $testObj = new BuildsJSONResponseTestTarget();
@@ -51,25 +67,22 @@ class BuildsJSONResponseTest extends TestCase
     {
         $testObj = new BuildsJSONResponseTestTarget();
 
-        $metaClass = new class () implements JSONSerializableInterface {
-            public function toJSON(): array
-            {
-                return [
-                    'metakey' => 'metavalue',
-                ];
-            }
-        };
+        $meta = $this->buildJSONSerializableObject([
+            'metakey' => 'metavalue',
+        ]);
 
-        $dataClass = new class () implements JSONSerializableInterface {
-            public function toJSON(): array
-            {
-                return [
-                    'datakey' => 'datavalue',
-                ];
-            }
-        };
+        $data = $this->buildJSONSerializableObject([
+            'datakey' => 'datavalue',
+        ]);
 
-        $resp = $testObj->buildResponse(new $metaClass(), new $dataClass(), ResponseStatus::newOK());
+        $errors = $this->buildJSONSerializableObject([
+            'field' => [
+                'rule' => 'myrule',
+                'message' => 'mymessage',
+            ],
+        ]);
+
+        $resp = $testObj->buildResponse($meta, $data, $errors, ResponseStatus::newOK());
 
         $this->assertEquals(new JsonResponse([
             'meta' => [
@@ -78,6 +91,27 @@ class BuildsJSONResponseTest extends TestCase
             'data' => [
                 'datakey' => 'datavalue',
             ],
+            'errors' => [
+                'field' => [
+                    'rule' => 'myrule',
+                    'message' => 'mymessage',
+                ],
+            ],
+        ], 200), $resp);
+    }
+
+    public function testThatDataCanBeNull(): void
+    {
+        $testObj = new BuildsJSONResponseTestTarget();
+
+        $meta = $this->buildJSONSerializableObject();
+        $errors = $this->buildJSONSerializableObject();
+        $resp = $testObj->buildResponse($meta, null, $errors, ResponseStatus::newOK());
+
+        $this->assertEquals(new JsonResponse([
+            'meta' => [],
+            'data' => null,
+            'errors' => [],
         ], 200), $resp);
     }
 }

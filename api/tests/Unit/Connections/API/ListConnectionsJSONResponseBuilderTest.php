@@ -8,6 +8,7 @@ use App\Common\API\PaginationData;
 use App\Common\Handler\ResponseStatus;
 use App\Connections\Model\ConnectionList;
 use App\Connections\Model\Entity\Connection;
+use App\Common\API\Error\FieldValidationErrorList;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\API\ListConnectionsJSONResponseBuilder;
@@ -62,6 +63,7 @@ class ListConnectionsJSONResponseBuilderTest extends TestCase
                 ],
             ],
             'data' => [],
+            'errors' => [],
         ], 200);
 
         $this->assertEquals($expect, $jsonResponse);
@@ -163,6 +165,7 @@ class ListConnectionsJSONResponseBuilderTest extends TestCase
                     'engine' => 'mysql',
                 ],
             ],
+            'errors' => [],
         ], 200);
 
         $this->assertEquals($expect, $jsonResponse);
@@ -214,5 +217,66 @@ class ListConnectionsJSONResponseBuilderTest extends TestCase
 
         $this->expectExceptionObject(new \RuntimeException("Version 2 not implemented for Connection serialization."));
         $builder->fromCommandResponse($resp);
+    }
+
+    public function testBuildFromCommandResponseHandlesErrors(): void
+    {
+        $resp = $this->createMock(ListConnectionsResponse::class);
+
+        $pagination = $this->createMock(PaginationData::class);
+        $pagination->expects($this->once())
+            ->method('toJSON')
+            ->willReturn([
+                'next_token' => 'sometoken',
+            ]);
+
+        $resp->expects($this->once())
+            ->method('getPagination')
+            ->willReturn($pagination);
+
+        $connList = $this->buildMockIterator(ConnectionList::class, []);
+        $connList->expects($this->once())
+            ->method('isEmpty')
+            ->willReturn(true);
+
+        $resp->expects($this->once())
+            ->method('getConnections')
+            ->willReturn($connList);
+
+        $resp->expects($this->never())
+            ->method('getCommand');
+
+        $mockResponseStatus = $this->createMock(ResponseStatus::class);
+        $mockResponseStatus->expects($this->once())
+            ->method('__toString')
+            ->willReturn(ResponseStatus::STATUS_OK);
+
+        $resp->expects($this->once())
+            ->method('getStatus')
+            ->willReturn($mockResponseStatus);
+
+        $mockErrors = $this->createMock(FieldValidationErrorList::class);
+        $mockErrors->expects($this->once())
+            ->method('toJSON')
+            ->willReturn(['error' => 'some_error']);
+        $resp->expects($this->once())
+            ->method('getErrors')
+            ->willReturn($mockErrors);
+
+        $builder = new ListConnectionsJSONResponseBuilder();
+
+        $jsonResponse = $builder->fromCommandResponse($resp);
+
+        $expect = new JsonResponse([
+            'meta' => [
+                'pagination' => [
+                    'next_token' => 'sometoken',
+                ],
+            ],
+            'data' => [],
+            'errors' => ['error' => 'some_error'],
+        ], 200);
+
+        $this->assertEquals($expect, $jsonResponse);
     }
 }

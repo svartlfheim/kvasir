@@ -5,14 +5,36 @@ namespace App\Connections\Command\V1;
 use App\Common\Command\FromRequestInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Connections\Command\ListConnectionsInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ListConnections implements FromRequestInterface, ListConnectionsInterface
 {
-    protected $limit;
+    /** @todo: Add an integration tests for the validation */
 
-    protected function __construct($limit)
+    #[Assert\Type('int')]
+    #[Assert\Range(
+        min: 10,
+        max: 100,
+    )]
+    protected $pageSize;
+
+    #[Assert\Type('int')]
+    protected $page;
+
+    #[Assert\Type('string')]
+    #[Assert\Choice(['name', 'engine'])]
+    protected $orderField;
+
+    #[Assert\Type('string')]
+    #[Assert\Choice(['asc', 'desc'])]
+    protected $orderDirection;
+
+    protected function __construct($pageSize, $page, $orderField, $orderDirection)
     {
-        $this->limit = $limit;
+        $this->pageSize = $pageSize;
+        $this->page = $page;
+        $this->orderField = $orderField;
+        $this->orderDirection = $orderDirection;
     }
 
     public function version(): int
@@ -20,13 +42,33 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
         return 1;
     }
 
-    public function getLimit(): int
+    public function getPageSize(): int
     {
-        return $this->limit ?? 20;
+        return $this->pageSize ?? 20;
+    }
+
+    public function getPage(): string
+    {
+        return $this->page ?? '';
+    }
+
+    public function getOrderField(): string
+    {
+        return $this->orderField ?? 'name';
+    }
+
+    public function getOrderDirection(): string
+    {
+        return $this->orderDirection ?? 'asc';
     }
 
     public static function fromRequest(Request $request): mixed
     {
-        return new self($request->get('limit'));
+        return new self(
+            $request->get('page_size'),
+            $request->get('page'),
+            $request->get('order_field'),
+            $request->get('order_direction'),
+        );
     }
 }

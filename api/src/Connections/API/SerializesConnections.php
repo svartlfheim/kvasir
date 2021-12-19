@@ -2,6 +2,7 @@
 
 namespace App\Connections\API;
 
+use RuntimeException;
 use App\Connections\Model\Entity\Connection;
 
 trait SerializesConnections
@@ -12,7 +13,7 @@ trait SerializesConnections
             case 1:
                 return $this->serializeConnectionV1($conn);
             default:
-                throw new \RuntimeException("Version $version not implemented for Connection serialization.");
+                throw new RuntimeException("Version $version not implemented for Connection serialization.");
         }
     }
 

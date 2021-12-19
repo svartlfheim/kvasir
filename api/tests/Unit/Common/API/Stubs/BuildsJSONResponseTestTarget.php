@@ -16,8 +16,8 @@ class BuildsJSONResponseTestTarget
         return $this->httpStatusCode($status);
     }
 
-    public function buildResponse(JSONSerializableInterface $metadata, JSONSerializableInterface $data, ResponseStatus $status): JsonResponse
+    public function buildResponse(JSONSerializableInterface $metadata, ?JSONSerializableInterface $data, JSONSerializableInterface $errors, ResponseStatus $status): JsonResponse
     {
-        return $this->jsonResponse($metadata, $data, $status);
+        return $this->jsonResponse($metadata, $data, $errors, $status);
     }
 }

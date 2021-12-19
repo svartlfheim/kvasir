@@ -8,13 +8,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    /*
-    It's quite common, that we'll end up needing some shared functionality for all tests
-    The easiest way to do that is to extend the base test case
-    This is here so we don't have to go though mass amounts of refactoring when we need this
-    If we never need extra functionality, we haven't really lost much by having this here.
-    */
-
     protected function buildMockIterator(string $class, array $items): MockObject
     {
         $iter = $this->createMock($class);
@@ -47,5 +40,17 @@ class TestCase extends BaseTestCase
             });
 
         return $iter;
+    }
+
+    protected function buildMockIteratorAggregate(string $class, array $items): MockObject
+    {
+        $iter = $this->buildMockIterator(ArrayIterator::class, $items);
+
+        $agg = $this->createMock($class);
+
+        $agg->method('getIterator')
+            ->willReturn($iter);
+
+        return $agg;
     }
 }

@@ -7,6 +7,7 @@
         "php": ">=8.0.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/annotations": "^1.13",
         "friendsofsymfony/rest-bundle": "3.*@dev",
         "jms/serializer-bundle": "^4.0",
         "symfony/console": "6.0.*",
@@ -15,6 +16,7 @@
         "symfony/framework-bundle": "6.0.*",
         "symfony/messenger": "6.0.*",
         "symfony/runtime": "6.0.*",
+        "symfony/validator": "6.0.*",
         "symfony/yaml": "6.0.*"
     },
     "require-dev": {

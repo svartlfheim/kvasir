@@ -21,8 +21,20 @@ class ListConnectionsJSONResponseBuilder
         return $this->jsonResponse(
             $meta,
             $this->buildResponseData($resp),
+            $this->buildErrorData($resp),
             $resp->getStatus()
         );
+    }
+
+    protected function buildErrorData(ListConnectionsResponse $resp): JSONSerializableInterface
+    {
+        $errors = $resp->getErrors();
+
+        if ($errors->isEmpty()) {
+            return new ArrayData([]);
+        }
+
+        return new ArrayData($errors->toJSON());
     }
 
     protected function buildResponseData(ListConnectionsResponse $resp): JSONSerializableInterface

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common;
+namespace App\Common\DI;
 
 use Symfony\Contracts\Service\Attribute\Required;
 use App\Common\MessageBusInterface;

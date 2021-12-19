@@ -13,34 +13,53 @@ class ListConnectionsTest extends TestCase
     {
         $requestMock = $this->createMock(Request::class);
 
-        $dto = ListConnections::fromRequest($requestMock);
+        $cmd = ListConnections::fromRequest($requestMock);
 
-        $this->assertInstanceOf(ListConnectionsInterface::class, $dto);
+        $this->assertInstanceOf(ListConnectionsInterface::class, $cmd);
     }
 
-    public function testLimitIsRetrievedFromRequest(): void
+    public function tstVersionIs1(): void
     {
         $requestMock = $this->createMock(Request::class);
-        $requestMock->expects($this->once())
+        $requestMock->expects($this->exactly(4))
             ->method('get')
-            ->with('limit')
-            ->willReturn(30);
+            ->withConsecutive(['page_size'], ['page'], ['order_field'], ['order_direction'])
+            ->willReturnOnConsecutiveCalls(10, 'currpage', 'somefield', 'desc');
 
-        $dto = ListConnections::fromRequest($requestMock);
+        $cmd = ListConnections::fromRequest($requestMock);
 
-        $this->assertEquals(30, $dto->getLimit());
+        $this->assertEquals(1, $cmd->version());
     }
 
-    public function testLimitIsDefaultedTo20(): void
+    public function testPropsArePulledFromRequest(): void
     {
         $requestMock = $this->createMock(Request::class);
-        $requestMock->expects($this->once())
+        $requestMock->expects($this->exactly(4))
             ->method('get')
-            ->with('limit')
-            ->willReturn(null);
+            ->withConsecutive(['page_size'], ['page'], ['order_field'], ['order_direction'])
+            ->willReturnOnConsecutiveCalls(10, 'currpage', 'somefield', 'desc');
 
-        $dto = ListConnections::fromRequest($requestMock);
+        $cmd = ListConnections::fromRequest($requestMock);
 
-        $this->assertEquals(20, $dto->getLimit());
+        $this->assertEquals(10, $cmd->getPageSize());
+        $this->assertEquals('currpage', $cmd->getPage());
+        $this->assertEquals('somefield', $cmd->getOrderField());
+        $this->assertEquals('desc', $cmd->getOrderDirection());
+    }
+
+    public function testDefaults(): void
+    {
+        $requestMock = $this->createMock(Request::class);
+        $requestMock->expects($this->exactly(4))
+            ->method('get')
+            ->withConsecutive(['page_size'], ['page'], ['order_field'], ['order_direction'])
+            ->willReturnOnConsecutiveCalls(null, null, null, null);
+
+        $cmd = ListConnections::fromRequest($requestMock);
+
+        $this->assertEquals(20, $cmd->getPageSize());
+        $this->assertEquals('', $cmd->getPage());
+        $this->assertEquals('name', $cmd->getOrderField());
+        $this->assertEquals('asc', $cmd->getOrderDirection());
     }
 }

@@ -9,13 +9,15 @@ use App\Connections\Controller\ApiV1Controller;
 use App\Connections\Command\V1\CreateConnection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Connections\API\ListConnectionsJSONResponseBuilder;
+use App\Connections\API\CreateConnectionJSONResponseBuilder;
 use App\Connections\Handler\Response\ListConnectionsResponse;
+use App\Connections\Handler\Response\CreateConnectionResponse;
 
 class ApiV1ControllerTest extends TestCase
 {
     public function testListConnections(): void
     {
-        $dtoMock = $this->createMock(ListConnections::class);
+        $cmdMock = $this->createMock(ListConnections::class);
 
         $mockCommandResponse = $this->createMock(ListConnectionsResponse::class);
         $mockResponseBuilder = $this->createMock(ListConnectionsJSONResponseBuilder::class);
@@ -27,7 +29,7 @@ class ApiV1ControllerTest extends TestCase
         $mockMessageBus = $this->createMock(MessageBusInterface::class);
         $mockMessageBus->expects($this->once())
             ->method('dispatchAndGetResult')
-            ->with($dtoMock, [])
+            ->with($cmdMock, [])
             ->willReturn($mockCommandResponse);
 
         $ctrl = new ApiV1Controller();
@@ -35,19 +37,26 @@ class ApiV1ControllerTest extends TestCase
 
         $this->assertEquals(
             new JsonResponse(['some'=> 'data'], 200),
-            $ctrl->index($dtoMock, $mockResponseBuilder),
+            $ctrl->index($cmdMock, $mockResponseBuilder),
         );
     }
 
     public function testCreateConnection(): void
     {
-        $dtoMock = $this->createMock(CreateConnection::class);
+        $mockCommandResponse = $this->createMock(CreateConnectionResponse::class);
+        $mockResponseBuilder = $this->createMock(CreateConnectionJSONResponseBuilder::class);
+        $mockResponseBuilder->expects($this->once())
+            ->method('fromCommandResponse')
+            ->with($mockCommandResponse)
+            ->willReturn(new JsonResponse(['some'=> 'data'], 200));
+
+        $cmdMock = $this->createMock(CreateConnection::class);
 
         $mockMessageBus = $this->createMock(MessageBusInterface::class);
         $mockMessageBus->expects($this->once())
             ->method('dispatchAndGetResult')
-            ->with($dtoMock, [])
-            ->willReturn(['some' => 'data']);
+            ->with($cmdMock, [])
+            ->willReturn($mockCommandResponse);
 
         $ctrl = new ApiV1Controller();
         $ctrl->withMessageBus($mockMessageBus);
@@ -56,7 +65,7 @@ class ApiV1ControllerTest extends TestCase
             new JsonResponse([
                 'some' => 'data',
             ]),
-            $ctrl->create($dtoMock),
+            $ctrl->create($cmdMock, $mockResponseBuilder),
         );
     }
 }
