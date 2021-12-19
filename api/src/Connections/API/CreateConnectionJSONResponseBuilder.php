@@ -3,7 +3,7 @@
 namespace App\Connections\API;
 
 use App\Common\API\ArrayData;
-use App\Common\API\BuildsJSONResponse;
+use App\Common\API\HTTPResponseBuilder;
 use App\Common\API\JSONSerializableInterface;
 use App\Common\API\Metadata;
 use App\Connections\Handler\Response\CreateConnectionResponse;
@@ -11,30 +11,25 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CreateConnectionJSONResponseBuilder
 {
-    use BuildsJSONResponse;
-    use SerializesConnections;
+    protected ConnectionSerializer $serializer;
+    protected HTTPResponseBuilder $httpResponseBuilder;
+
+    public function __construct(ConnectionSerializer $serializer, HTTPResponseBuilder $httpResponseBuilder)
+    {
+        $this->serializer = $serializer;
+        $this->httpResponseBuilder = $httpResponseBuilder;
+    }
 
     public function fromCommandResponse(CreateConnectionResponse $resp): JsonResponse
     {
         $meta = new Metadata();
 
-        return $this->jsonResponse(
+        return $this->httpResponseBuilder->json(
             $meta,
             $this->buildResponseData($resp),
-            $this->buildErrorData($resp),
+            $this->httpResponseBuilder->mapValidationErrorsToHTTPField($resp->getCommand(), $resp->getErrors()),
             $resp->getStatus()
         );
-    }
-
-    protected function buildErrorData(CreateConnectionResponse $resp): JSONSerializableInterface
-    {
-        $errors = $resp->getErrors();
-
-        if ($errors->isEmpty()) {
-            return new ArrayData([]);
-        }
-
-        return new ArrayData($errors->toJSON());
     }
 
     protected function buildResponseData(CreateConnectionResponse $resp): ?JSONSerializableInterface
@@ -43,9 +38,10 @@ class CreateConnectionJSONResponseBuilder
             return null;
         }
 
+        $this->serializer->setVersion($resp->getCommand()->version());
+
         return new ArrayData(
-            $this->serializeConnectionForVersion(
-                $resp->getCommand()->version(),
+            $this->serializer->serialize(
                 $resp->getConnection()
             )
         );

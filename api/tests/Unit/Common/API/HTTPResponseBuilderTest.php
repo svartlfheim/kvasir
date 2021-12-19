@@ -2,14 +2,14 @@
 
 namespace App\Tests\Unit\Common\API;
 
+use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\API\HTTPResponseBuilder;
 use App\Common\API\JSONSerializableInterface;
 use App\Common\Handler\ResponseStatus;
-use App\Tests\Unit\Common\API\Stubs\BuildsJSONResponseTestTarget;
 use App\Tests\Unit\TestCase;
 use ReflectionClass;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
-class BuildsJSONResponseTest extends TestCase
+class HTTPResponseBuilderTest extends TestCase
 {
     public function buildJSONSerializableObject(array $data = []): JSONSerializableInterface
     {
@@ -29,12 +29,47 @@ class BuildsJSONResponseTest extends TestCase
     }
     public function testTheSupportedResponseStatuses(): void
     {
-        $testObj = new BuildsJSONResponseTestTarget();
+        $testObj = new HTTPResponseBuilder();
 
-        $this->assertEquals(200, $testObj->getHTTPStatusCode(ResponseStatus::newOK()));
-        $this->assertEquals(422, $testObj->getHTTPStatusCode(ResponseStatus::newValidationError()));
-        $this->assertEquals(500, $testObj->getHTTPStatusCode(ResponseStatus::newError()));
-        $this->assertEquals(201, $testObj->getHTTPStatusCode(ResponseStatus::newCreated()));
+        $errors = $this->createMock(FieldValidationErrorList::class);
+        $errors->expects($this->exactly(4))->method('toJSON')->willReturn([]);
+
+        $this->assertEquals(
+            200,
+            $testObj->json(
+                $this->buildJSONSerializableObject(),
+                $this->buildJSONSerializableObject(),
+                $errors,
+                ResponseStatus::newOK()
+            )->getStatusCode()
+        );
+        $this->assertEquals(
+            201,
+            $testObj->json(
+                $this->buildJSONSerializableObject(),
+                $this->buildJSONSerializableObject(),
+                $errors,
+                ResponseStatus::newCreated()
+            )->getStatusCode()
+        );
+        $this->assertEquals(
+            422,
+            $testObj->json(
+                $this->buildJSONSerializableObject(),
+                $this->buildJSONSerializableObject(),
+                $errors,
+                ResponseStatus::newValidationError()
+            )->getStatusCode()
+        );
+        $this->assertEquals(
+            500,
+            $testObj->json(
+                $this->buildJSONSerializableObject(),
+                $this->buildJSONSerializableObject(),
+                $errors,
+                ResponseStatus::newError()
+            )->getStatusCode()
+        );
     }
 
     /**
@@ -53,19 +88,27 @@ class BuildsJSONResponseTest extends TestCase
         $resp = $reflectedResp->newInstanceWithoutConstructor();
         $constructor->invoke($resp, 'fake_status');
 
-        $testObj = new BuildsJSONResponseTestTarget();
+        $errors = $this->createMock(FieldValidationErrorList::class);
+        $errors->expects($this->exactly(1))->method('toJSON')->willReturn([]);
+
+        $testObj = new HTTPResponseBuilder();
 
         /*
          We can't assert the exception class, as it's been reflected.
          The actual exception will a ReflectionException...
          */
         $this->expectExceptionMessage("Could not map status 'fake_status' to http code.");
-        $this->assertEquals(200, $testObj->getHTTPStatusCode($resp));
+        $testObj->json(
+            $this->buildJSONSerializableObject(),
+            $this->buildJSONSerializableObject(),
+            $errors,
+            $resp
+        );
     }
 
     public function testThatTheJSONResponseIsBuiltCorrectly(): void
     {
-        $testObj = new BuildsJSONResponseTestTarget();
+        $testObj = new HTTPResponseBuilder();
 
         $meta = $this->buildJSONSerializableObject([
             'metakey' => 'metavalue',
@@ -75,16 +118,17 @@ class BuildsJSONResponseTest extends TestCase
             'datakey' => 'datavalue',
         ]);
 
-        $errors = $this->buildJSONSerializableObject([
+        $errors = $this->createMock(FieldValidationErrorList::class);
+        $errors->expects($this->once())->method('toJSON')->willReturn([
             'field' => [
                 'rule' => 'myrule',
                 'message' => 'mymessage',
             ],
         ]);
 
-        $resp = $testObj->buildResponse($meta, $data, $errors, ResponseStatus::newOK());
+        $resp = $testObj->json($meta, $data, $errors, ResponseStatus::newOK());
 
-        $this->assertEquals(new JsonResponse([
+        $this->assertEquals(json_encode([
             'meta' => [
                 'metakey' => 'metavalue',
             ],
@@ -97,21 +141,24 @@ class BuildsJSONResponseTest extends TestCase
                     'message' => 'mymessage',
                 ],
             ],
-        ], 200), $resp);
+        ]), $resp->getContent());
+        $this->assertEquals(200, $resp->getStatusCode());
     }
 
     public function testThatDataCanBeNull(): void
     {
-        $testObj = new BuildsJSONResponseTestTarget();
+        $testObj = new HTTPResponseBuilder();
 
         $meta = $this->buildJSONSerializableObject();
-        $errors = $this->buildJSONSerializableObject();
-        $resp = $testObj->buildResponse($meta, null, $errors, ResponseStatus::newOK());
+        $errors = $this->createMock(FieldValidationErrorList::class);
+        $errors->expects($this->once())->method('toJSON')->willReturn([]);
+        $resp = $testObj->json($meta, null, $errors, ResponseStatus::newOK());
 
-        $this->assertEquals(new JsonResponse([
+        $this->assertEquals(json_encode([
             'meta' => [],
             'data' => null,
             'errors' => [],
-        ], 200), $resp);
+        ]), $resp->getContent());
+        $this->assertEquals(200, $resp->getStatusCode());
     }
 }

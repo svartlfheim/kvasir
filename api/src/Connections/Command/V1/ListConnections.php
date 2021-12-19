@@ -2,6 +2,7 @@
 
 namespace App\Connections\Command\V1;
 
+use App\Common\Attributes\HTTPField;
 use App\Common\Command\FromRequestInterface;
 use App\Connections\Command\ListConnectionsInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,7 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
         min: 10,
         max: 100,
     )]
+    #[HTTPField('page_size')]
     protected $pageSize;
 
     #[Assert\Type('int')]
@@ -23,10 +25,12 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
 
     #[Assert\Type('string')]
     #[Assert\Choice(['name', 'engine'])]
+    #[HTTPField('order_field')]
     protected $orderField;
 
     #[Assert\Type('string')]
     #[Assert\Choice(['asc', 'desc'])]
+    #[HTTPField('order_direction')]
     protected $orderDirection;
 
     protected function __construct($pageSize, $page, $orderField, $orderDirection)

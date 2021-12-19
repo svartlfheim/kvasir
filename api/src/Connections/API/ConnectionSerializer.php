@@ -5,15 +5,22 @@ namespace App\Connections\API;
 use App\Connections\Model\Entity\Connection;
 use RuntimeException;
 
-trait SerializesConnections
+class ConnectionSerializer
 {
-    protected function serializeConnectionForVersion(int $version, Connection $conn): array
+    protected ?int $version;
+
+    public function setVersion(int $version): void
     {
-        switch ($version) {
+        $this->version = $version;
+    }
+
+    public function serialize(Connection $conn): array
+    {
+        switch ($this->version) {
             case 1:
                 return $this->serializeConnectionV1($conn);
             default:
-                throw new RuntimeException("Version $version not implemented for Connection serialization.");
+                throw new RuntimeException("Version $this->version not implemented for Connection serialization.");
         }
     }
 
