@@ -2,10 +2,9 @@
 
 namespace App\Common\API\Error;
 
-use Iterator;
-use Countable;
 use App\Common\API\JSONSerializableInterface;
-use App\Common\API\Error\FieldValidationError;
+use Countable;
+use Iterator;
 
 class FieldValidationErrorList implements Iterator, Countable, JSONSerializableInterface
 {
@@ -48,7 +47,7 @@ class FieldValidationErrorList implements Iterator, Countable, JSONSerializableI
         return isset($this->errors[$this->key()]);
     }
 
-    public function reverse()
+    public function reverse(): void
     {
         $this->errors = array_reverse($this->errors);
         $this->rewind();

@@ -2,9 +2,9 @@
 
 namespace App\Connections\Model;
 
-use Iterator;
-use Countable;
 use App\Connections\Model\Entity\Connection;
+use Countable;
+use Iterator;
 
 class ConnectionList implements Iterator, Countable
 {
@@ -47,7 +47,7 @@ class ConnectionList implements Iterator, Countable
         return isset($this->connections[$this->key()]);
     }
 
-    public function reverse()
+    public function reverse(): void
     {
         $this->connections = array_reverse($this->connections);
         $this->rewind();

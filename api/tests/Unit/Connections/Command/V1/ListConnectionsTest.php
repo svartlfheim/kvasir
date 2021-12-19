@@ -2,10 +2,10 @@
 
 namespace App\Tests\Unit\Connections\Command\V1;
 
+use App\Connections\Command\ListConnectionsInterface;
+use App\Connections\Command\V1\ListConnections;
 use App\Tests\Unit\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use App\Connections\Command\V1\ListConnections;
-use App\Connections\Command\ListConnectionsInterface;
 
 class ListConnectionsTest extends TestCase
 {

@@ -2,18 +2,18 @@
 
 namespace App\Tests\Unit\Connections\Handler;
 
-use App\Tests\Unit\TestCase;
+use App\Common\API\Error\FieldValidationError;
+use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\API\Error\Violation;
 use App\Common\Handler\ResponseStatus;
-use App\Connections\Handler\CreateConnection;
-use App\Common\API\Error\FieldValidationError;
-use Symfony\Component\Validator\Constraints\Type;
-use App\Common\API\Error\FieldValidationErrorList;
-use Symfony\Component\Validator\ConstraintViolation;
 use App\Connections\Command\CreateConnectionInterface;
+use App\Connections\Handler\CreateConnection;
+use App\Connections\Handler\Response\CreateConnectionResponse;
+use App\Tests\Unit\TestCase;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Connections\Handler\Response\CreateConnectionResponse;
 
 class CreateConnectionTest extends TestCase
 {

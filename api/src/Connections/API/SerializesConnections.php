@@ -2,8 +2,8 @@
 
 namespace App\Connections\API;
 
-use RuntimeException;
 use App\Connections\Model\Entity\Connection;
+use RuntimeException;
 
 trait SerializesConnections
 {

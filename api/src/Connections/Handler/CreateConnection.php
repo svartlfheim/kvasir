@@ -2,15 +2,10 @@
 
 namespace App\Connections\Handler;
 
-use App\Common\API\Error\Violation;
 use App\Common\DI\RequiresValidator;
 use App\Common\Handler\ResponseStatus;
 use App\Common\Handler\ValidatesCommand;
-use App\Common\API\Error\FieldValidationError;
-use Symfony\Contracts\Service\Attribute\Required;
-use App\Common\API\Error\FieldValidationErrorList;
 use App\Connections\Command\CreateConnectionInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Connections\Handler\Response\CreateConnectionResponse;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 

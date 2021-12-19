@@ -2,12 +2,12 @@
 
 namespace App\Tests\Unit\Connections\Handler\Response;
 
-use App\Tests\Unit\TestCase;
-use App\Common\Handler\ResponseStatus;
-use App\Connections\Model\Entity\Connection;
 use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\CreateConnectionInterface;
 use App\Connections\Handler\Response\CreateConnectionResponse;
+use App\Connections\Model\Entity\Connection;
+use App\Tests\Unit\TestCase;
 
 class CreateConnectionResponseTest extends TestCase
 {

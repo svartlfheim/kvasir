@@ -2,9 +2,9 @@
 
 namespace App\Tests\Unit\Common\DI;
 
-use ReflectionObject;
-use App\Tests\Unit\TestCase;
 use App\Common\DI\RequiresValidator;
+use App\Tests\Unit\TestCase;
+use ReflectionObject;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class RequiresValidatorTest extends TestCase

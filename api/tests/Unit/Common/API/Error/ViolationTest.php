@@ -2,8 +2,8 @@
 
 namespace App\Tests\Unit\Common\API\Error;
 
-use App\Tests\Unit\TestCase;
 use App\Common\API\Error\Violation;
+use App\Tests\Unit\TestCase;
 
 class ViolationTest extends TestCase
 {

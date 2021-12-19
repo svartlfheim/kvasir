@@ -68,7 +68,7 @@ api-utest: ## Run unit tests for API
 
 .PHONY: api-lint
 api-lint: ## Run cs fixer on api codebase
-	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run
+	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --allow-risky yes
 
 .PHONY: lint
 lint: api-lint ## Run all linters for the repo
@@ -79,7 +79,7 @@ api-stan: ## Run the phpstan analysis on src
 
 .PHONY: api-csfix
 api-csfix: ## Run cs fixer on api codebase
-	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
+	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --allow-risky yes
 
 .PHONY: restart
 restart: down up ## Destroys the environment and then starts it

@@ -2,12 +2,12 @@
 
 namespace App\Connections\Handler\Response;
 
-use App\Common\API\PaginationData;
-use App\Common\Handler\ResponseStatus;
-use App\Common\Handler\ResponseInterface;
-use App\Connections\Model\ConnectionList;
 use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\API\PaginationData;
+use App\Common\Handler\ResponseInterface;
+use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\ListConnectionsInterface;
+use App\Connections\Model\ConnectionList;
 
 class ListConnectionsResponse implements ResponseInterface
 {

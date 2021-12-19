@@ -2,17 +2,16 @@
 
 namespace App\Tests\Unit\Connections\API;
 
-use ArrayIterator;
-use App\Tests\Unit\TestCase;
+use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\API\PaginationData;
 use App\Common\Handler\ResponseStatus;
+use App\Connections\API\ListConnectionsJSONResponseBuilder;
+use App\Connections\Command\ListConnectionsInterface;
+use App\Connections\Handler\Response\ListConnectionsResponse;
 use App\Connections\Model\ConnectionList;
 use App\Connections\Model\Entity\Connection;
-use App\Common\API\Error\FieldValidationErrorList;
+use App\Tests\Unit\TestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Connections\Command\ListConnectionsInterface;
-use App\Connections\API\ListConnectionsJSONResponseBuilder;
-use App\Connections\Handler\Response\ListConnectionsResponse;
 
 class ListConnectionsJSONResponseBuilderTest extends TestCase
 {

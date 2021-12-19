@@ -2,13 +2,13 @@
 
 namespace App\Tests\Unit\Connections\Handler\Response;
 
-use App\Tests\Unit\TestCase;
+use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\API\PaginationData;
 use App\Common\Handler\ResponseStatus;
-use App\Connections\Model\ConnectionList;
-use App\Common\API\Error\FieldValidationErrorList;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\Response\ListConnectionsResponse;
+use App\Connections\Model\ConnectionList;
+use App\Tests\Unit\TestCase;
 
 class ListConnectionsResponseTest extends TestCase
 {

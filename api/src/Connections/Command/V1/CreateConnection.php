@@ -3,8 +3,8 @@
 namespace App\Connections\Command\V1;
 
 use App\Common\Command\FromRequestInterface;
-use Symfony\Component\HttpFoundation\Request;
 use App\Connections\Command\CreateConnectionInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CreateConnection implements FromRequestInterface, CreateConnectionInterface

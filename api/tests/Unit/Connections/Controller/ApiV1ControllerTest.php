@@ -2,16 +2,16 @@
 
 namespace App\Tests\Unit\Connections\Controller;
 
-use App\Tests\Unit\TestCase;
 use App\Common\MessageBusInterface;
+use App\Connections\API\CreateConnectionJSONResponseBuilder;
+use App\Connections\API\ListConnectionsJSONResponseBuilder;
+use App\Connections\Command\V1\CreateConnection;
 use App\Connections\Command\V1\ListConnections;
 use App\Connections\Controller\ApiV1Controller;
-use App\Connections\Command\V1\CreateConnection;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Connections\API\ListConnectionsJSONResponseBuilder;
-use App\Connections\API\CreateConnectionJSONResponseBuilder;
-use App\Connections\Handler\Response\ListConnectionsResponse;
 use App\Connections\Handler\Response\CreateConnectionResponse;
+use App\Connections\Handler\Response\ListConnectionsResponse;
+use App\Tests\Unit\TestCase;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ApiV1ControllerTest extends TestCase
 {

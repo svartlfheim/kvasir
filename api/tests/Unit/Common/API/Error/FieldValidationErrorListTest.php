@@ -2,15 +2,13 @@
 
 namespace App\Tests\Unit\Common\API\Error;
 
-use DateTime;
-use Iterator;
-use Countable;
-use RuntimeException;
-use App\Tests\Unit\TestCase;
-use App\Common\API\Error\Violation;
-use App\Common\API\JSONSerializableInterface;
 use App\Common\API\Error\FieldValidationError;
 use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\API\Error\Violation;
+use App\Common\API\JSONSerializableInterface;
+use App\Tests\Unit\TestCase;
+use Countable;
+use Iterator;
 
 class FieldValidationErrorListTest extends TestCase
 {

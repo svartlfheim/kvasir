@@ -3,11 +3,11 @@
 namespace App\Tests\Unit\Common;
 
 use App\Common\MessageBus;
-use App\Tests\Unit\TestCase;
 use App\Common\MessageBusInterface;
+use App\Tests\Unit\TestCase;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\MessageBusInterface as BaseMessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 class MessageBusTest extends TestCase
 {
@@ -17,7 +17,7 @@ class MessageBusTest extends TestCase
     So we wanna make sure it implements the interface to ensure that DI will work later
     A proper integration tests should be written at some point anyway, but belt and braces
     */
-    public function testItImplementsTheMessageBusInterface()
+    public function testItImplementsTheMessageBusInterface(): void
     {
         $base = $this->createMock(BaseMessageBusInterface::class);
 
@@ -30,7 +30,7 @@ class MessageBusTest extends TestCase
      * We can't mock the stamps or envelope as they're final
      * So we need to create a 'real' version of these in the tests below
      */
-    public function testItSendsDispatchToBaseBus()
+    public function testItSendsDispatchToBaseBus(): void
     {
         $msgClass = new class () {};
         $msg = new $msgClass();
@@ -49,7 +49,7 @@ class MessageBusTest extends TestCase
         $this->assertInstanceOf(Envelope::class, $bus->dispatch($msg, $stamps));
     }
 
-    public function testItDispatchesAndReturnsResult()
+    public function testItDispatchesAndReturnsResult(): void
     {
         $msgClass = new class () {};
         $msg = new $msgClass();

@@ -2,12 +2,12 @@
 
 namespace App\Tests\Unit\Common\API;
 
-use ReflectionClass;
-use App\Tests\Unit\TestCase;
-use App\Common\Handler\ResponseStatus;
 use App\Common\API\JSONSerializableInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Common\Handler\ResponseStatus;
 use App\Tests\Unit\Common\API\Stubs\BuildsJSONResponseTestTarget;
+use App\Tests\Unit\TestCase;
+use ReflectionClass;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BuildsJSONResponseTest extends TestCase
 {

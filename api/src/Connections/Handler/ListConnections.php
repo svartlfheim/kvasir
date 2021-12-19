@@ -6,9 +6,9 @@ use App\Common\API\PaginationData;
 use App\Common\DI\RequiresValidator;
 use App\Common\Handler\ResponseStatus;
 use App\Common\Handler\ValidatesCommand;
-use App\Connections\Model\ConnectionList;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\Response\ListConnectionsResponse;
+use App\Connections\Model\ConnectionList;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class ListConnections implements MessageHandlerInterface

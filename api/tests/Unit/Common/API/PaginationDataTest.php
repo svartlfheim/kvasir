@@ -2,12 +2,12 @@
 
 namespace App\Tests\Unit\Common\API;
 
-use App\Tests\Unit\TestCase;
 use App\Common\API\PaginationData;
+use App\Tests\Unit\TestCase;
 
 class PaginationDataTest extends TestCase
 {
-    public function testDefaultStructure()
+    public function testDefaultStructure(): void
     {
         $pData = new PaginationData();
         $this->assertEquals([
@@ -21,7 +21,7 @@ class PaginationDataTest extends TestCase
         ], $pData->toJSON());
     }
 
-    public function testAllPropertiesCanBeAdded()
+    public function testAllPropertiesCanBeAdded(): void
     {
         $pData = new PaginationData();
         $pData->withNextToken('nextpage')
@@ -42,7 +42,7 @@ class PaginationDataTest extends TestCase
         ], $pData->toJSON());
     }
 
-    public function testAllPropertiesAreOverriddenOnSubsequentCalls()
+    public function testAllPropertiesAreOverriddenOnSubsequentCalls(): void
     {
         $pData = new PaginationData();
         $pData->withNextToken('nextpage')

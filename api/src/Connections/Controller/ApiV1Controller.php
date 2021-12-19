@@ -2,16 +2,14 @@
 
 namespace App\Connections\Controller;
 
-use App\Common\MessageBusInterface;
 use App\Common\DI\RequiresMessageBus;
-use App\Connections\Command\V1\ListConnections;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Connections\Command\V1\CreateConnection;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Messenger\Stamp\HandledStamp;
-use App\Connections\API\ListConnectionsJSONResponseBuilder;
 use App\Connections\API\CreateConnectionJSONResponseBuilder;
+use App\Connections\API\ListConnectionsJSONResponseBuilder;
+use App\Connections\Command\V1\CreateConnection;
+use App\Connections\Command\V1\ListConnections;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * This controller uses a prefix...

@@ -2,15 +2,15 @@
 
 namespace App\Tests\Unit\Connections\API;
 
-use RuntimeException;
-use App\Tests\Unit\TestCase;
-use App\Common\Handler\ResponseStatus;
-use App\Connections\Model\Entity\Connection;
 use App\Common\API\Error\FieldValidationErrorList;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Connections\Command\CreateConnectionInterface;
+use App\Common\Handler\ResponseStatus;
 use App\Connections\API\CreateConnectionJSONResponseBuilder;
+use App\Connections\Command\CreateConnectionInterface;
 use App\Connections\Handler\Response\CreateConnectionResponse;
+use App\Connections\Model\Entity\Connection;
+use App\Tests\Unit\TestCase;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CreateConnectionJSONResponseBuilderTest extends TestCase
 {

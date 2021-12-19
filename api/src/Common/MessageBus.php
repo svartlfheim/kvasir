@@ -2,10 +2,9 @@
 
 namespace App\Common;
 
-use App\Common\MessageBusInterface;
 use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Messenger\MessageBusInterface as BaseMessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 /**
  * So I wrapped the default message bus for convenience.

@@ -2,7 +2,6 @@
 
 namespace App\Common\API;
 
-use App\Common\API\JSONSerializableInterface;
 use App\Common\Handler\ResponseStatus;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

@@ -2,20 +2,20 @@
 
 namespace App\Tests\Unit\Common\API;
 
-use App\Common\API\Metadata;
-use App\Tests\Unit\TestCase;
-use App\Common\API\PaginationData;
 use App\Common\API\JSONSerializableInterface;
+use App\Common\API\Metadata;
+use App\Common\API\PaginationData;
+use App\Tests\Unit\TestCase;
 
 class MetadataTest extends TestCase
 {
-    public function testItIsEmptyWithoutAnySpecifiedFields()
+    public function testItIsEmptyWithoutAnySpecifiedFields(): void
     {
         $mData = new Metadata();
         $this->assertEquals([], $mData->toJSON());
     }
 
-    public function testThatPaginationCanBeAdded()
+    public function testThatPaginationCanBeAdded(): void
     {
         $pagination = $this->createMock(PaginationData::class);
         $pagination->expects($this->once())
@@ -35,7 +35,7 @@ class MetadataTest extends TestCase
         ], $mData->toJSON());
     }
 
-    public function testThatGenericFieldsCanBeAdded()
+    public function testThatGenericFieldsCanBeAdded(): void
     {
         $value1Class = new class () implements JSONSerializableInterface {
             public function toJSON(): array

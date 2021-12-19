@@ -2,10 +2,10 @@
 
 namespace App\Tests\Unit\Common\DI;
 
-use ReflectionObject;
-use App\Tests\Unit\TestCase;
 use App\Common\DI\RequiresMessageBus;
 use App\Common\MessageBusInterface;
+use App\Tests\Unit\TestCase;
+use ReflectionObject;
 
 class RequiresMessageBusTest extends TestCase
 {

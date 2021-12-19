@@ -2,9 +2,9 @@
 
 namespace App\Common\Handler;
 
-use App\Common\API\Error\Violation;
 use App\Common\API\Error\FieldValidationError;
 use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\API\Error\Violation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

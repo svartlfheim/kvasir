@@ -2,10 +2,10 @@
 
 namespace App\Tests\Unit\Connections\Command\V1;
 
+use App\Connections\Command\CreateConnectionInterface;
+use App\Connections\Command\V1\CreateConnection;
 use App\Tests\Unit\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use App\Connections\Command\V1\CreateConnection;
-use App\Connections\Command\CreateConnectionInterface;
 
 class CreateConnectionTest extends TestCase
 {

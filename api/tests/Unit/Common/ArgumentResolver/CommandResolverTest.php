@@ -2,13 +2,13 @@
 
 namespace App\Tests\Unit\Common\ArgumentResolver;
 
-use App\Tests\Unit\TestCase;
 use App\Common\ArgumentResolver\CommandResolver;
+use App\Tests\Unit\Common\ArgumentResolver\Stubs\DoesNotImplementFromRequest;
+use App\Tests\Unit\Common\ArgumentResolver\Stubs\ImplementsFromRequest;
+use App\Tests\Unit\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use App\Tests\Unit\Common\ArgumentResolver\Stubs\ImplementsFromRequest;
-use App\Tests\Unit\Common\ArgumentResolver\Stubs\DoesNotImplementFromRequest;
 
 class CommandResolverTest extends TestCase
 {

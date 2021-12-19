@@ -2,15 +2,15 @@
 
 namespace App\Tests\Unit\Common\Handler;
 
-use App\Tests\Unit\TestCase;
+use App\Common\API\Error\FieldValidationError;
+use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\API\Error\Violation;
 use App\Common\Handler\ValidatesCommand;
-use App\Common\API\Error\FieldValidationError;
-use Symfony\Component\Validator\Constraints\Type;
-use App\Common\API\Error\FieldValidationErrorList;
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\ConstraintViolation;
 use App\Connections\Command\ListConnectionsInterface;
+use App\Tests\Unit\TestCase;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 

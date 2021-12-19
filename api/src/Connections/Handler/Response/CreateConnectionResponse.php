@@ -2,11 +2,11 @@
 
 namespace App\Connections\Handler\Response;
 
-use App\Common\Handler\ResponseStatus;
-use App\Common\Handler\ResponseInterface;
-use App\Connections\Model\Entity\Connection;
 use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\Handler\ResponseInterface;
+use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\CreateConnectionInterface;
+use App\Connections\Model\Entity\Connection;
 
 class CreateConnectionResponse implements ResponseInterface
 {

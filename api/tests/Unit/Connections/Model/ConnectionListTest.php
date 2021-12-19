@@ -2,13 +2,12 @@
 
 namespace App\Tests\Unit\Connections\Model;
 
-use DateTime;
-use Iterator;
-use Countable;
-use RuntimeException;
-use App\Tests\Unit\TestCase;
 use App\Connections\Model\ConnectionList;
 use App\Connections\Model\Entity\Connection;
+use App\Tests\Unit\TestCase;
+use Countable;
+use DateTime;
+use Iterator;
 
 class ConnectionListTest extends TestCase
 {

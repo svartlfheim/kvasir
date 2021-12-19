@@ -2,12 +2,12 @@
 
 namespace App\Connections\API;
 
-use App\Common\API\Metadata;
 use App\Common\API\ArrayData;
-use App\Common\API\JSONSerializableInterface;
 use App\Common\API\BuildsJSONResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Common\API\JSONSerializableInterface;
+use App\Common\API\Metadata;
 use App\Connections\Handler\Response\ListConnectionsResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ListConnectionsJSONResponseBuilder
 {

@@ -2,12 +2,12 @@
 
 namespace App\Tests\Unit\Common\Handler;
 
-use App\Tests\Unit\TestCase;
 use App\Common\Handler\ResponseStatus;
+use App\Tests\Unit\TestCase;
 
 class ResponseStatusTest extends TestCase
 {
-    public function testNewOkCanBeCreated()
+    public function testNewOkCanBeCreated(): void
     {
         $status = ResponseStatus::newOK();
         $this->assertInstanceOf(ResponseStatus::class, $status);
@@ -15,7 +15,7 @@ class ResponseStatusTest extends TestCase
         $this->assertEquals(ResponseStatus::STATUS_OK, $status->getName());
     }
 
-    public function testNewErrorCanBeCreated()
+    public function testNewErrorCanBeCreated(): void
     {
         $status = ResponseStatus::newError();
         $this->assertInstanceOf(ResponseStatus::class, $status);
@@ -23,7 +23,7 @@ class ResponseStatusTest extends TestCase
         $this->assertEquals(ResponseStatus::STATUS_ERROR, $status->getName());
     }
 
-    public function testNewCreatedCanBeCreated()
+    public function testNewCreatedCanBeCreated(): void
     {
         $status = ResponseStatus::newCreated();
         $this->assertInstanceOf(ResponseStatus::class, $status);
@@ -31,7 +31,7 @@ class ResponseStatusTest extends TestCase
         $this->assertEquals(ResponseStatus::STATUS_CREATED, $status->getName());
     }
 
-    public function testNewValidationErrorCanBeCreated()
+    public function testNewValidationErrorCanBeCreated(): void
     {
         $status = ResponseStatus::newValidationError();
         $this->assertInstanceOf(ResponseStatus::class, $status);
@@ -39,7 +39,7 @@ class ResponseStatusTest extends TestCase
         $this->assertEquals(ResponseStatus::STATUS_VALIDATION_ERROR, $status->getName());
     }
 
-    public function testIsValidStatus()
+    public function testIsValidStatus(): void
     {
         $this->assertTrue(ResponseStatus::isValidStatus(ResponseStatus::STATUS_CREATED));
         $this->assertTrue(ResponseStatus::isValidStatus(ResponseStatus::STATUS_OK));

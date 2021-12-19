@@ -2,11 +2,11 @@
 
 namespace App\Tests\Unit\Common\API\Error;
 
+use App\Common\API\Error\FieldValidationError;
+use App\Common\API\Error\Violation;
+use App\Tests\Unit\TestCase;
 use DateTime;
 use RuntimeException;
-use App\Tests\Unit\TestCase;
-use App\Common\API\Error\Violation;
-use App\Common\API\Error\FieldValidationError;
 
 class FieldValidationErrorTest extends TestCase
 {

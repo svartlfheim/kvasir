@@ -2,19 +2,19 @@
 
 namespace App\Tests\Unit\Connections\Handler;
 
-use App\Tests\Unit\TestCase;
-use App\Common\API\PaginationData;
-use App\Common\API\Error\Violation;
-use App\Common\Handler\ResponseStatus;
-use App\Connections\Model\ConnectionList;
-use App\Connections\Handler\ListConnections;
 use App\Common\API\Error\FieldValidationError;
-use Symfony\Component\Validator\Constraints\Type;
 use App\Common\API\Error\FieldValidationErrorList;
-use Symfony\Component\Validator\ConstraintViolation;
+use App\Common\API\Error\Violation;
+use App\Common\API\PaginationData;
+use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\ListConnectionsInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
+use App\Connections\Handler\ListConnections;
 use App\Connections\Handler\Response\ListConnectionsResponse;
+use App\Connections\Model\ConnectionList;
+use App\Tests\Unit\TestCase;
+use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ListConnectionsTest extends TestCase
