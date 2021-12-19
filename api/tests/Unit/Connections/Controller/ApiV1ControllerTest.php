@@ -17,6 +17,7 @@ class ApiV1ControllerTest extends TestCase
 {
     public function testListConnections(): void
     {
+        $expected = new JsonResponse(['some'=> 'data'], 200);
         $cmdMock = $this->createMock(ListConnections::class);
 
         $mockCommandResponse = $this->createMock(ListConnectionsResponse::class);
@@ -24,7 +25,7 @@ class ApiV1ControllerTest extends TestCase
         $mockResponseBuilder->expects($this->once())
             ->method('fromCommandResponse')
             ->with($mockCommandResponse)
-            ->willReturn(new JsonResponse(['some'=> 'data'], 200));
+            ->willReturn($expected);
 
         $mockMessageBus = $this->createMock(MessageBusInterface::class);
         $mockMessageBus->expects($this->once())
@@ -35,20 +36,18 @@ class ApiV1ControllerTest extends TestCase
         $ctrl = new ApiV1Controller();
         $ctrl->withMessageBus($mockMessageBus);
 
-        $this->assertEquals(
-            new JsonResponse(['some'=> 'data'], 200),
-            $ctrl->index($cmdMock, $mockResponseBuilder),
-        );
+        $this->assertSame($expected, $ctrl->index($cmdMock, $mockResponseBuilder));
     }
 
     public function testCreateConnection(): void
     {
+        $expected = new JsonResponse(['some'=> 'data'], 200);
         $mockCommandResponse = $this->createMock(CreateConnectionResponse::class);
         $mockResponseBuilder = $this->createMock(CreateConnectionJSONResponseBuilder::class);
         $mockResponseBuilder->expects($this->once())
             ->method('fromCommandResponse')
             ->with($mockCommandResponse)
-            ->willReturn(new JsonResponse(['some'=> 'data'], 200));
+            ->willReturn($expected);
 
         $cmdMock = $this->createMock(CreateConnection::class);
 
@@ -61,11 +60,6 @@ class ApiV1ControllerTest extends TestCase
         $ctrl = new ApiV1Controller();
         $ctrl->withMessageBus($mockMessageBus);
 
-        $this->assertEquals(
-            new JsonResponse([
-                'some' => 'data',
-            ]),
-            $ctrl->create($cmdMock, $mockResponseBuilder),
-        );
+        $this->assertSame($expected, $ctrl->create($cmdMock, $mockResponseBuilder));
     }
 }
