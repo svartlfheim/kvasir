@@ -24,12 +24,11 @@ class CreateConnectionJSONResponseBuilder
     {
         $meta = new Metadata();
 
-        return $this->httpResponseBuilder->json(
-            $meta,
-            $this->buildResponseData($resp),
-            $this->httpResponseBuilder->mapValidationErrorsToHTTPField($resp->getCommand(), $resp->getErrors()),
-            $resp->getStatus()
-        );
+        return $this->httpResponseBuilder->withMeta($meta)
+            ->withData($this->buildResponseData($resp))
+            ->withHTTPMappedErrors($resp->getErrors(), $resp->getCommand())
+            ->withStatus($resp->getStatus())
+            ->json();
     }
 
     protected function buildResponseData(CreateConnectionResponse $resp): ?JSONSerializableInterface

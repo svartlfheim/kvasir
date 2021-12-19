@@ -24,12 +24,11 @@ class ListConnectionsJSONResponseBuilder
     {
         $meta = (new Metadata())->withPagination($resp->getPagination());
 
-        return $this->httpResponseBuilder->json(
-            $meta,
-            $this->buildResponseData($resp),
-            $this->httpResponseBuilder->mapValidationErrorsToHTTPField($resp->getCommand(), $resp->getErrors()),
-            $resp->getStatus()
-        );
+        return $this->httpResponseBuilder->withMeta($meta)
+            ->withData($this->buildResponseData($resp))
+            ->withHTTPMappedErrors($resp->getErrors(), $resp->getCommand())
+            ->withStatus($resp->getStatus())
+            ->json();
     }
 
     protected function buildResponseData(ListConnectionsResponse $resp): JSONSerializableInterface

@@ -48,6 +48,10 @@ class ListConnectionsJSONResponseBuilderTest extends TestCase
         ], 200);
 
         $mockHTTPBuilder = $this->createMock(HTTPResponseBuilder::class);
+        $mockHTTPBuilder->expects($this->once())->method('withMeta')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withData')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withStatus')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
         $mockHTTPBuilder->expects($this->once())->method('json')->willReturn($expect);
 
         $builder = new ListConnectionsJSONResponseBuilder($mockSerializer, $mockHTTPBuilder);
@@ -128,6 +132,10 @@ class ListConnectionsJSONResponseBuilderTest extends TestCase
         ], 200);
 
         $mockHTTPBuilder = $this->createMock(HTTPResponseBuilder::class);
+        $mockHTTPBuilder->expects($this->once())->method('withMeta')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withData')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withStatus')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
         $mockHTTPBuilder->expects($this->once())->method('json')->willReturn($expect);
 
         $builder = new ListConnectionsJSONResponseBuilder($mockSerializer, $mockHTTPBuilder);
@@ -171,6 +179,10 @@ class ListConnectionsJSONResponseBuilderTest extends TestCase
         ], 200);
 
         $mockHTTPBuilder = $this->createMock(HTTPResponseBuilder::class);
+        $mockHTTPBuilder->expects($this->once())->method('withMeta')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withData')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withStatus')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->once())->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
         $mockHTTPBuilder->expects($this->once())->method('json')->willReturn($expect);
 
         $builder = new ListConnectionsJSONResponseBuilder($mockSerializer, $mockHTTPBuilder);

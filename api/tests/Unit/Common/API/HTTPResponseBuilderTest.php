@@ -2,12 +2,16 @@
 
 namespace App\Tests\Unit\Common\API;
 
+use App\Common\API\Error\FieldValidationError;
 use App\Common\API\Error\FieldValidationErrorList;
+use App\Common\API\Error\Violation;
 use App\Common\API\HTTPResponseBuilder;
 use App\Common\API\JSONSerializableInterface;
+use App\Common\Attributes\HTTPField;
 use App\Common\Handler\ResponseStatus;
 use App\Tests\Unit\TestCase;
 use ReflectionClass;
+use RuntimeException;
 
 class HTTPResponseBuilderTest extends TestCase
 {
@@ -27,48 +31,34 @@ class HTTPResponseBuilderTest extends TestCase
             }
         };
     }
+
+    public function testStatusGuard(): void
+    {
+        $testObj = new HTTPResponseBuilder();
+
+        $this->expectExceptionObject(new RuntimeException("Response status cannot be null in an HTTP response."));
+        $testObj->json();
+    }
+
     public function testTheSupportedResponseStatuses(): void
     {
         $testObj = new HTTPResponseBuilder();
 
-        $errors = $this->createMock(FieldValidationErrorList::class);
-        $errors->expects($this->exactly(4))->method('toJSON')->willReturn([]);
-
         $this->assertEquals(
             200,
-            $testObj->json(
-                $this->buildJSONSerializableObject(),
-                $this->buildJSONSerializableObject(),
-                $errors,
-                ResponseStatus::newOK()
-            )->getStatusCode()
+            $testObj->withStatus(ResponseStatus::newOK())->json()->getStatusCode()
         );
         $this->assertEquals(
             201,
-            $testObj->json(
-                $this->buildJSONSerializableObject(),
-                $this->buildJSONSerializableObject(),
-                $errors,
-                ResponseStatus::newCreated()
-            )->getStatusCode()
+            $testObj->withStatus(ResponseStatus::newCreated())->json()->getStatusCode()
         );
         $this->assertEquals(
             422,
-            $testObj->json(
-                $this->buildJSONSerializableObject(),
-                $this->buildJSONSerializableObject(),
-                $errors,
-                ResponseStatus::newValidationError()
-            )->getStatusCode()
+            $testObj->withStatus(ResponseStatus::newValidationError())->json()->getStatusCode()
         );
         $this->assertEquals(
             500,
-            $testObj->json(
-                $this->buildJSONSerializableObject(),
-                $this->buildJSONSerializableObject(),
-                $errors,
-                ResponseStatus::newError()
-            )->getStatusCode()
+            $testObj->withStatus(ResponseStatus::newError())->json()->getStatusCode()
         );
     }
 
@@ -88,9 +78,6 @@ class HTTPResponseBuilderTest extends TestCase
         $resp = $reflectedResp->newInstanceWithoutConstructor();
         $constructor->invoke($resp, 'fake_status');
 
-        $errors = $this->createMock(FieldValidationErrorList::class);
-        $errors->expects($this->exactly(1))->method('toJSON')->willReturn([]);
-
         $testObj = new HTTPResponseBuilder();
 
         /*
@@ -98,12 +85,7 @@ class HTTPResponseBuilderTest extends TestCase
          The actual exception will a ReflectionException...
          */
         $this->expectExceptionMessage("Could not map status 'fake_status' to http code.");
-        $testObj->json(
-            $this->buildJSONSerializableObject(),
-            $this->buildJSONSerializableObject(),
-            $errors,
-            $resp
-        );
+        $testObj->withStatus($resp)->json();
     }
 
     public function testThatTheJSONResponseIsBuiltCorrectly(): void
@@ -126,7 +108,11 @@ class HTTPResponseBuilderTest extends TestCase
             ],
         ]);
 
-        $resp = $testObj->json($meta, $data, $errors, ResponseStatus::newOK());
+        $resp = $testObj->withMeta($meta)
+            ->withData($data)
+            ->withErrors($errors)
+            ->withStatus(ResponseStatus::newOK())
+            ->json();
 
         $this->assertEquals(json_encode([
             'meta' => [
@@ -152,7 +138,11 @@ class HTTPResponseBuilderTest extends TestCase
         $meta = $this->buildJSONSerializableObject();
         $errors = $this->createMock(FieldValidationErrorList::class);
         $errors->expects($this->once())->method('toJSON')->willReturn([]);
-        $resp = $testObj->json($meta, null, $errors, ResponseStatus::newOK());
+
+        $resp = $testObj->withMeta($meta)
+        ->withErrors($errors)
+        ->withStatus(ResponseStatus::newOK())
+        ->json();
 
         $this->assertEquals(json_encode([
             'meta' => [],
@@ -160,5 +150,44 @@ class HTTPResponseBuilderTest extends TestCase
             'errors' => [],
         ]), $resp->getContent());
         $this->assertEquals(200, $resp->getStatusCode());
+    }
+
+    public function testErrorHTTPMapping(): void
+    {
+        $mockCommand = new class () {
+            #[HTTPField('my_prop')]
+            protected string $myProp;
+        };
+
+
+        $mockViolation = $this->createMock(Violation::class);
+        $mockViolation->expects($this->once())->method('getRule')->willReturn('some_rule');
+        $mockViolation->expects($this->once())->method('getMessage')->willReturn('some_message');
+        $mockViolations = [$mockViolation];
+
+        $error = $this->createMock(FieldValidationError::class);
+        $error->expects($this->once())->method('getFieldName')->willReturn('myProp');
+        $error->expects($this->once())->method('getViolations')->willReturn($mockViolations);
+
+        $errors = $this->buildMockIterator(FieldValidationErrorList::class, [$error]);
+        $testObj = new HTTPResponseBuilder();
+
+        $resp = $testObj->withHTTPMappedErrors($errors, $mockCommand)
+            ->withStatus(ResponseStatus::newOK())
+            ->json();
+
+        $this->assertEquals(json_encode([
+            'meta' => [],
+            'data' => null,
+            'errors'=> [
+                // Without mapping this would be myProp
+                'my_prop' => [
+                    [
+                        'rule' => 'some_rule',
+                        'message' => 'some_message',
+                    ],
+                ],
+            ],
+        ]), $resp->getContent());
     }
 }

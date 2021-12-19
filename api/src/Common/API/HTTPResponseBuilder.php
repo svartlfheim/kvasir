@@ -7,10 +7,16 @@ use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\Attributes\HTTPField;
 use App\Common\Handler\ResponseStatus;
 use ReflectionObject;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class HTTPResponseBuilder
 {
+    protected ?JSONSerializableInterface $metadata = null;
+    protected ?JSONSerializableInterface $data = null;
+    protected ?FieldValidationErrorList $errors = null;
+    protected ?ResponseStatus $responseStatus = null;
+
     protected static $httpMapping = [
         ResponseStatus::STATUS_OK => 200,
         ResponseStatus::STATUS_CREATED => 201,
@@ -55,18 +61,62 @@ class HTTPResponseBuilder
         return $mapped;
     }
 
+    public function withMeta(JSONSerializableInterface $metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function withData(?JSONSerializableInterface $data): self
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    public function withErrors(FieldValidationErrorList $errors): self
+    {
+        $this->errors = $errors;
+
+        return $this;
+    }
+
+    public function withHTTPMappedErrors(FieldValidationErrorList $errors, object $cmd): self
+    {
+        $this->errors = $this->mapValidationErrorsToHTTPField($cmd, $errors);
+
+        return $this;
+    }
+
+    public function withStatus(ResponseStatus $status): self
+    {
+        $this->responseStatus = $status;
+
+        return $this;
+    }
+
+    protected function guardStatus(): void
+    {
+        if ($this->responseStatus === null) {
+            throw new RuntimeException("Response status cannot be null in an HTTP response.");
+        }
+    }
+
     /**
      * We'll need to deal with headers at some point...
      */
-    public function json(JSONSerializableInterface $metadata, ?JSONSerializableInterface $data, FieldValidationErrorList $errors, ResponseStatus $status): JsonResponse
+    public function json(): JsonResponse
     {
+        $this->guardStatus();
+
         return new JsonResponse(
             [
-                'meta' => $metadata->toJSON(),
-                'data' => $data !== null ? $data->toJSON() : null,
-                'errors' => $errors->toJSON(),
+                'meta' => $this->metadata !== null ? $this->metadata->toJSON() : [],
+                'data' => $this->data !== null ? $this->data->toJSON() : null,
+                'errors' => $this->errors !== null ? $this->errors->toJSON() : [],
             ],
-            $this->httpStatusCode($status),
+            $this->httpStatusCode($this->responseStatus),
         );
     }
 }
