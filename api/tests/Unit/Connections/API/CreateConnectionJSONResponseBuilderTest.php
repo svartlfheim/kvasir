@@ -18,10 +18,10 @@ class CreateConnectionJSONResponseBuilderTest extends TestCase
     public function testBuildsOKResponse(): void
     {
         $mockErrors = $this->createMock(FieldValidationErrorList::class);
-        $mockErrors->expects($this->once())->method('isEmpty')->willReturn(true);
+        $mockErrors->expects($this->exactly(1))->method('isEmpty')->willReturn(true);
 
         $mockCommand = $this->createMock(CreateConnectionInterface::class);
-        $mockCommand->expects($this->once())->method('version')->willReturn(1);
+        $mockCommand->expects($this->exactly(1))->method('version')->willReturn(1);
 
         $mockConnection = $this->createMock(Connection::class);
 
@@ -34,8 +34,8 @@ class CreateConnectionJSONResponseBuilderTest extends TestCase
         $resp->expects($this->exactly(1))->method('getStatus')->willReturn($mockStatus);
 
         $mockSerializer = $this->createMock(ConnectionSerializer::class);
-        $mockSerializer->expects($this->once())->method('setVersion')->with(1);
-        $mockSerializer->expects($this->once())->method('serialize')->with($mockConnection)->willReturn([
+        $mockSerializer->expects($this->exactly(1))->method('setVersion')->with(1);
+        $mockSerializer->expects($this->exactly(1))->method('serialize')->with($mockConnection)->willReturn([
             'name' => 'my-conn',
             'engine' => 'mysql',
         ]);
@@ -50,11 +50,11 @@ class CreateConnectionJSONResponseBuilderTest extends TestCase
         ], 201);
 
         $mockHTTPBuilder = $this->createMock(HTTPResponseBuilder::class);
-        $mockHTTPBuilder->expects($this->once())->method('withMeta')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('withData')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('withStatus')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('json')->willReturn($expect);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withMeta')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withData')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withStatus')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('json')->willReturn($expect);
 
         $builder = new CreateConnectionJSONResponseBuilder($mockSerializer, $mockHTTPBuilder);
 
@@ -64,22 +64,22 @@ class CreateConnectionJSONResponseBuilderTest extends TestCase
     public function testBuildsResponseWithErrors(): void
     {
         $mockErrors = $this->createMock(FieldValidationErrorList::class);
-        $mockErrors->expects($this->once())->method('isEmpty')->willReturn(false);
+        $mockErrors->expects($this->exactly(1))->method('isEmpty')->willReturn(false);
 
         $mockCommand = $this->createMock(CreateConnectionInterface::class);
-        $mockCommand->expects($this->never())->method('version')->willReturn(1);
+        $mockCommand->expects($this->exactly(0))->method('version')->willReturn(1);
 
         $mockStatus = $this->createMock(ResponseStatus::class);
 
         $resp = $this->createMock(CreateConnectionResponse::class);
         $resp->expects($this->exactly(2))->method('getErrors')->willReturn($mockErrors);
-        $resp->expects($this->once())->method('getCommand')->willReturn($mockCommand);
-        $resp->expects($this->never())->method('getConnection');
+        $resp->expects($this->exactly(1))->method('getCommand')->willReturn($mockCommand);
+        $resp->expects($this->exactly(0))->method('getConnection');
         $resp->expects($this->exactly(1))->method('getStatus')->willReturn($mockStatus);
 
         $mockSerializer = $this->createMock(ConnectionSerializer::class);
-        $mockSerializer->expects($this->never())->method('setVersion');
-        $mockSerializer->expects($this->never())->method('serialize');
+        $mockSerializer->expects($this->exactly(0))->method('setVersion');
+        $mockSerializer->expects($this->exactly(0))->method('serialize');
 
         $expect = new JsonResponse([
             'meta' => [],
@@ -90,11 +90,11 @@ class CreateConnectionJSONResponseBuilderTest extends TestCase
         ], 201);
 
         $mockHTTPBuilder = $this->createMock(HTTPResponseBuilder::class);
-        $mockHTTPBuilder->expects($this->once())->method('withMeta')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('withData')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('withStatus')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
-        $mockHTTPBuilder->expects($this->once())->method('json')->willReturn($expect);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withMeta')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withData')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withStatus')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('withHTTPMappedErrors')->willReturn($mockHTTPBuilder);
+        $mockHTTPBuilder->expects($this->exactly(1))->method('json')->willReturn($expect);
 
         $builder = new CreateConnectionJSONResponseBuilder($mockSerializer, $mockHTTPBuilder);
 

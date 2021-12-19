@@ -18,7 +18,7 @@ class MetadataTest extends TestCase
     public function testThatPaginationCanBeAdded(): void
     {
         $pagination = $this->createMock(PaginationData::class);
-        $pagination->expects($this->once())
+        $pagination->expects($this->exactly(1))
             ->method('toJSON')
             ->willReturn([
                 'page' => 1,

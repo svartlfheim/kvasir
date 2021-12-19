@@ -55,7 +55,7 @@ class ValidatesCommandTest extends TestCase
         $list = $this->buildMockIteratorAggregate(ConstraintViolationList::class, []);
 
         $v = $this->createMock(ValidatorInterface::class);
-        $v->expects($this->once())->method('validate')->willReturn($list);
+        $v->expects($this->exactly(1))->method('validate')->willReturn($list);
         $testObj = $this->buildTestObject($v);
         // Juts picked one at random, it is irrelevant what object we pass
         $cmd = $this->createMock(ListConnectionsInterface::class);
@@ -68,19 +68,19 @@ class ValidatesCommandTest extends TestCase
     public function testSingleErrorForFields(): void
     {
         $error1 = $this->createMock(ConstraintViolation::class);
-        $error1->expects($this->once())->method('getPropertyPath')->willReturn('field1');
-        $error1->expects($this->once())->method('getMessage')->willReturn('error1message');
-        $error1->expects($this->once())->method('getConstraint')->willReturn(new Type('string'));
+        $error1->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field1');
+        $error1->expects($this->exactly(1))->method('getMessage')->willReturn('error1message');
+        $error1->expects($this->exactly(1))->method('getConstraint')->willReturn(new Type('string'));
 
         $error2 = $this->createMock(ConstraintViolation::class);
-        $error2->expects($this->once())->method('getPropertyPath')->willReturn('field2');
-        $error2->expects($this->once())->method('getMessage')->willReturn('error2message');
-        $error2->expects($this->once())->method('getConstraint')->willReturn(new Length(null, 0, 10));
+        $error2->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field2');
+        $error2->expects($this->exactly(1))->method('getMessage')->willReturn('error2message');
+        $error2->expects($this->exactly(1))->method('getConstraint')->willReturn(new Length(null, 0, 10));
 
         $list = $this->buildMockIteratorAggregate(ConstraintViolationList::class, [$error1, $error2]);
 
         $v = $this->createMock(ValidatorInterface::class);
-        $v->expects($this->once())->method('validate')->willReturn($list);
+        $v->expects($this->exactly(1))->method('validate')->willReturn($list);
         $testObj = $this->buildTestObject($v);
         // Juts picked one at random, it is irrelevant what object we pass
         $cmd = $this->createMock(ListConnectionsInterface::class);
@@ -97,24 +97,24 @@ class ValidatesCommandTest extends TestCase
     public function testMultipleErrorsForFields(): void
     {
         $error1 = $this->createMock(ConstraintViolation::class);
-        $error1->expects($this->once())->method('getPropertyPath')->willReturn('field1');
-        $error1->expects($this->once())->method('getMessage')->willReturn('error1message');
-        $error1->expects($this->once())->method('getConstraint')->willReturn(new Type('string'));
+        $error1->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field1');
+        $error1->expects($this->exactly(1))->method('getMessage')->willReturn('error1message');
+        $error1->expects($this->exactly(1))->method('getConstraint')->willReturn(new Type('string'));
 
         $error2 = $this->createMock(ConstraintViolation::class);
-        $error2->expects($this->once())->method('getPropertyPath')->willReturn('field1');
-        $error2->expects($this->once())->method('getMessage')->willReturn('error2message');
-        $error2->expects($this->once())->method('getConstraint')->willReturn(new Length(null, 0, 10));
+        $error2->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field1');
+        $error2->expects($this->exactly(1))->method('getMessage')->willReturn('error2message');
+        $error2->expects($this->exactly(1))->method('getConstraint')->willReturn(new Length(null, 0, 10));
 
         $error3 = $this->createMock(ConstraintViolation::class);
-        $error3->expects($this->once())->method('getPropertyPath')->willReturn('field2');
-        $error3->expects($this->once())->method('getMessage')->willReturn('error3message');
-        $error3->expects($this->once())->method('getConstraint')->willReturn(new Length(null, 0, 10));
+        $error3->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field2');
+        $error3->expects($this->exactly(1))->method('getMessage')->willReturn('error3message');
+        $error3->expects($this->exactly(1))->method('getConstraint')->willReturn(new Length(null, 0, 10));
 
         $list = $this->buildMockIteratorAggregate(ConstraintViolationList::class, [$error1, $error2, $error3]);
 
         $v = $this->createMock(ValidatorInterface::class);
-        $v->expects($this->once())->method('validate')->willReturn($list);
+        $v->expects($this->exactly(1))->method('validate')->willReturn($list);
         $testObj = $this->buildTestObject($v);
         // Juts picked one at random, it is irrelevant what object we pass
         $cmd = $this->createMock(ListConnectionsInterface::class);
@@ -142,19 +142,19 @@ class ValidatesCommandTest extends TestCase
     public function testGroupingViolationsByProperty(): void
     {
         $error1 = $this->createMock(ConstraintViolation::class);
-        $error1->expects($this->once())->method('getPropertyPath')->willReturn('field1');
-        $error1->expects($this->once())->method('getMessage')->willReturn('error1message');
-        $error1->expects($this->once())->method('getConstraint')->willReturn(new Type('string'));
+        $error1->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field1');
+        $error1->expects($this->exactly(1))->method('getMessage')->willReturn('error1message');
+        $error1->expects($this->exactly(1))->method('getConstraint')->willReturn(new Type('string'));
 
         $error2 = $this->createMock(ConstraintViolation::class);
-        $error2->expects($this->once())->method('getPropertyPath')->willReturn('field1');
-        $error2->expects($this->once())->method('getMessage')->willReturn('error1message2');
-        $error2->expects($this->once())->method('getConstraint')->willReturn(new Length(null, 0, 10));
+        $error2->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field1');
+        $error2->expects($this->exactly(1))->method('getMessage')->willReturn('error1message2');
+        $error2->expects($this->exactly(1))->method('getConstraint')->willReturn(new Length(null, 0, 10));
 
         $error3 = $this->createMock(ConstraintViolation::class);
-        $error3->expects($this->once())->method('getPropertyPath')->willReturn('field2');
-        $error3->expects($this->once())->method('getMessage')->willReturn('error3message');
-        $error3->expects($this->once())->method('getConstraint')->willReturn(new Length(null, 0, 10));
+        $error3->expects($this->exactly(1))->method('getPropertyPath')->willReturn('field2');
+        $error3->expects($this->exactly(1))->method('getMessage')->willReturn('error3message');
+        $error3->expects($this->exactly(1))->method('getConstraint')->willReturn(new Length(null, 0, 10));
 
         $list = $this->buildMockIteratorAggregate(ConstraintViolationList::class, [$error1, $error2, $error3]);
 

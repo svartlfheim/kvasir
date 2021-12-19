@@ -101,7 +101,7 @@ class HTTPResponseBuilderTest extends TestCase
         ]);
 
         $errors = $this->createMock(FieldValidationErrorList::class);
-        $errors->expects($this->once())->method('toJSON')->willReturn([
+        $errors->expects($this->exactly(1))->method('toJSON')->willReturn([
             'field' => [
                 'rule' => 'myrule',
                 'message' => 'mymessage',
@@ -137,7 +137,7 @@ class HTTPResponseBuilderTest extends TestCase
 
         $meta = $this->buildJSONSerializableObject();
         $errors = $this->createMock(FieldValidationErrorList::class);
-        $errors->expects($this->once())->method('toJSON')->willReturn([]);
+        $errors->expects($this->exactly(1))->method('toJSON')->willReturn([]);
 
         $resp = $testObj->withMeta($meta)
         ->withErrors($errors)
@@ -161,13 +161,13 @@ class HTTPResponseBuilderTest extends TestCase
 
 
         $mockViolation = $this->createMock(Violation::class);
-        $mockViolation->expects($this->once())->method('getRule')->willReturn('some_rule');
-        $mockViolation->expects($this->once())->method('getMessage')->willReturn('some_message');
+        $mockViolation->expects($this->exactly(1))->method('getRule')->willReturn('some_rule');
+        $mockViolation->expects($this->exactly(1))->method('getMessage')->willReturn('some_message');
         $mockViolations = [$mockViolation];
 
         $error = $this->createMock(FieldValidationError::class);
-        $error->expects($this->once())->method('getFieldName')->willReturn('myProp');
-        $error->expects($this->once())->method('getViolations')->willReturn($mockViolations);
+        $error->expects($this->exactly(1))->method('getFieldName')->willReturn('myProp');
+        $error->expects($this->exactly(1))->method('getViolations')->willReturn($mockViolations);
 
         $errors = $this->buildMockIterator(FieldValidationErrorList::class, [$error]);
         $testObj = new HTTPResponseBuilder();

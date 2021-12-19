@@ -63,32 +63,32 @@ class FieldValidationErrorListTest extends TestCase
     public function testSerialization(): void
     {
         $error1Violation1 = $this->createMock(Violation::class);
-        $error1Violation1->expects($this->once())->method('getRule')->willReturn('error1-rule1');
-        $error1Violation1->expects($this->once())->method('getMessage')->willReturn('error1-message1');
+        $error1Violation1->expects($this->exactly(1))->method('getRule')->willReturn('error1-rule1');
+        $error1Violation1->expects($this->exactly(1))->method('getMessage')->willReturn('error1-message1');
 
         $error1Violation2 = $this->createMock(Violation::class);
-        $error1Violation2->expects($this->once())->method('getRule')->willReturn('error1-rule2');
-        $error1Violation2->expects($this->once())->method('getMessage')->willReturn('error1-message2');
+        $error1Violation2->expects($this->exactly(1))->method('getRule')->willReturn('error1-rule2');
+        $error1Violation2->expects($this->exactly(1))->method('getMessage')->willReturn('error1-message2');
 
         $error1Violations = [$error1Violation1, $error1Violation2];
 
         $error = $this->createMock(FieldValidationError::class);
-        $error->expects($this->once())->method('getFieldName')->willReturn('field1');
-        $error->expects($this->once())->method('getViolations')->willReturn($error1Violations);
+        $error->expects($this->exactly(1))->method('getFieldName')->willReturn('field1');
+        $error->expects($this->exactly(1))->method('getViolations')->willReturn($error1Violations);
 
         $error2Violation1 = $this->createMock(Violation::class);
-        $error2Violation1->expects($this->once())->method('getRule')->willReturn('error2-rule1');
-        $error2Violation1->expects($this->once())->method('getMessage')->willReturn('error2-message1');
+        $error2Violation1->expects($this->exactly(1))->method('getRule')->willReturn('error2-rule1');
+        $error2Violation1->expects($this->exactly(1))->method('getMessage')->willReturn('error2-message1');
 
         $error2Violation2 = $this->createMock(Violation::class);
-        $error2Violation2->expects($this->once())->method('getRule')->willReturn('error2-rule2');
-        $error2Violation2->expects($this->once())->method('getMessage')->willReturn('error2-message2');
+        $error2Violation2->expects($this->exactly(1))->method('getRule')->willReturn('error2-rule2');
+        $error2Violation2->expects($this->exactly(1))->method('getMessage')->willReturn('error2-message2');
 
         $error2Violations = [$error2Violation1, $error2Violation2];
 
         $error2 = $this->createMock(FieldValidationError::class);
-        $error2->expects($this->once())->method('getFieldName')->willReturn('field2');
-        $error2->expects($this->once())->method('getViolations')->willReturn($error2Violations);
+        $error2->expects($this->exactly(1))->method('getFieldName')->willReturn('field2');
+        $error2->expects($this->exactly(1))->method('getViolations')->willReturn($error2Violations);
         $list = FieldValidationErrorList::empty();
 
         $list->add($error);

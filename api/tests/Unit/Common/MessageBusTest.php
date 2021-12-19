@@ -39,7 +39,7 @@ class MessageBusTest extends TestCase
         ];
 
         $base = $this->createMock(BaseMessageBusInterface::class);
-        $base->expects($this->once())
+        $base->expects($this->exactly(1))
             ->method('dispatch')
             ->with($msg, $stamps)
             ->willReturn(new Envelope($msg, $stamps));
@@ -58,7 +58,7 @@ class MessageBusTest extends TestCase
         ];
 
         $base = $this->createMock(BaseMessageBusInterface::class);
-        $base->expects($this->once())
+        $base->expects($this->exactly(1))
             ->method('dispatch')
             ->with($msg, $stamps)
             ->willReturn(new Envelope($msg, $stamps));

@@ -11,8 +11,8 @@ class ConnectionSerializerTest extends TestCase
     public function testSerializeConnectionV1(): void
     {
         $conn = $this->createMock(Connection::class);
-        $conn->expects($this->once())->method('getName')->willReturn('conn-1');
-        $conn->expects($this->once())->method('getEngine')->willReturn('mysql');
+        $conn->expects($this->exactly(1))->method('getName')->willReturn('conn-1');
+        $conn->expects($this->exactly(1))->method('getEngine')->willReturn('mysql');
 
         $serializer = new ConnectionSerializer();
         $serializer->setVersion(1);
@@ -26,8 +26,8 @@ class ConnectionSerializerTest extends TestCase
     public function testSerializeConnectionUnsupportedAPIVersion(): void
     {
         $conn = $this->createMock(Connection::class);
-        $conn->expects($this->never())->method('getName');
-        $conn->expects($this->never())->method('getEngine');
+        $conn->expects($this->exactly(0))->method('getName');
+        $conn->expects($this->exactly(0))->method('getEngine');
 
         $serializer = new ConnectionSerializer();
         $serializer->setVersion(2);

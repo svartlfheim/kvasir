@@ -24,7 +24,7 @@ class CreateConnectionTest extends TestCase
         $cmd = $this->createMock(CreateConnectionInterface::class);
 
         $validator = $this->createMock(ValidatorInterface::class);
-        $validator->expects($this->once())->method('validate')->with($cmd)->willReturn($constraintViolationList);
+        $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($constraintViolationList);
 
         $handler = new CreateConnection();
         $handler->withValidator($validator);
@@ -43,16 +43,16 @@ class CreateConnectionTest extends TestCase
     public function testValidationErrorHandling(): void
     {
         $mockConstraintViolation = $this->createMock(ConstraintViolation::class);
-        $mockConstraintViolation->expects($this->once())->method('getPropertyPath')->willReturn('somefield');
-        $mockConstraintViolation->expects($this->once())->method('getMessage')->willReturn('some error');
-        $mockConstraintViolation->expects($this->once())->method('getConstraint')->willReturn(new Type('string'));
+        $mockConstraintViolation->expects($this->exactly(1))->method('getPropertyPath')->willReturn('somefield');
+        $mockConstraintViolation->expects($this->exactly(1))->method('getMessage')->willReturn('some error');
+        $mockConstraintViolation->expects($this->exactly(1))->method('getConstraint')->willReturn(new Type('string'));
 
         $constraintViolationList = $this->buildMockIteratorAggregate(ConstraintViolationList::class, [$mockConstraintViolation]);
 
         $cmd = $this->createMock(CreateConnectionInterface::class);
 
         $validator = $this->createMock(ValidatorInterface::class);
-        $validator->expects($this->once())->method('validate')->with($cmd)->willReturn($constraintViolationList);
+        $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($constraintViolationList);
 
         $handler = new CreateConnection();
         $handler->withValidator($validator);

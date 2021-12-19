@@ -22,13 +22,13 @@ class ApiV1ControllerTest extends TestCase
 
         $mockCommandResponse = $this->createMock(ListConnectionsResponse::class);
         $mockResponseBuilder = $this->createMock(ListConnectionsJSONResponseBuilder::class);
-        $mockResponseBuilder->expects($this->once())
+        $mockResponseBuilder->expects($this->exactly(1))
             ->method('fromCommandResponse')
             ->with($mockCommandResponse)
             ->willReturn($expected);
 
         $mockMessageBus = $this->createMock(MessageBusInterface::class);
-        $mockMessageBus->expects($this->once())
+        $mockMessageBus->expects($this->exactly(1))
             ->method('dispatchAndGetResult')
             ->with($cmdMock, [])
             ->willReturn($mockCommandResponse);
@@ -44,7 +44,7 @@ class ApiV1ControllerTest extends TestCase
         $expected = new JsonResponse(['some'=> 'data'], 200);
         $mockCommandResponse = $this->createMock(CreateConnectionResponse::class);
         $mockResponseBuilder = $this->createMock(CreateConnectionJSONResponseBuilder::class);
-        $mockResponseBuilder->expects($this->once())
+        $mockResponseBuilder->expects($this->exactly(1))
             ->method('fromCommandResponse')
             ->with($mockCommandResponse)
             ->willReturn($expected);
@@ -52,7 +52,7 @@ class ApiV1ControllerTest extends TestCase
         $cmdMock = $this->createMock(CreateConnection::class);
 
         $mockMessageBus = $this->createMock(MessageBusInterface::class);
-        $mockMessageBus->expects($this->once())
+        $mockMessageBus->expects($this->exactly(1))
             ->method('dispatchAndGetResult')
             ->with($cmdMock, [])
             ->willReturn($mockCommandResponse);

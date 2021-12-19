@@ -16,11 +16,11 @@ class CommandResolverTest extends TestCase
     {
         $requestMock = $this->createMock(Request::class);
         $requestStackMock = $this->createMock(RequestStack::class);
-        $requestStackMock->expects($this->once())
+        $requestStackMock->expects($this->exactly(1))
             ->method('getCurrentRequest')
             ->willReturn($requestMock);
         $argumentMock = $this->createMock(ArgumentMetadata::class);
-        $argumentMock->expects($this->once())
+        $argumentMock->expects($this->exactly(1))
             ->method('getType')
             ->willReturn(ImplementsFromRequest::class);
 
@@ -34,11 +34,11 @@ class CommandResolverTest extends TestCase
     {
         $requestMock = $this->createMock(Request::class);
         $requestStackMock = $this->createMock(RequestStack::class);
-        $requestStackMock->expects($this->once())
+        $requestStackMock->expects($this->exactly(1))
             ->method('getCurrentRequest')
             ->willReturn($requestMock);
         $argumentMock = $this->createMock(ArgumentMetadata::class);
-        $argumentMock->expects($this->once())
+        $argumentMock->expects($this->exactly(1))
             ->method('getType')
             ->willReturn(DoesNotImplementFromRequest::class);
 
@@ -52,11 +52,11 @@ class CommandResolverTest extends TestCase
     {
         $requestMock = $this->createMock(Request::class);
         $requestStackMock = $this->createMock(RequestStack::class);
-        $requestStackMock->expects($this->once())
+        $requestStackMock->expects($this->exactly(1))
             ->method('getCurrentRequest')
             ->willReturn($requestMock);
         $argumentMock = $this->createMock(ArgumentMetadata::class);
-        $argumentMock->expects($this->once())
+        $argumentMock->expects($this->exactly(1))
             ->method('getType')
             ->willReturn(ImplementsFromRequest::class);
 
