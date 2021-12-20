@@ -3,8 +3,6 @@
 namespace App\Connections\Controller;
 
 use App\Common\DI\RequiresMessageBus;
-use App\Connections\API\CreateConnectionJSONResponseBuilder;
-use App\Connections\API\ListConnectionsJSONResponseBuilder;
 use App\Connections\Command\V1\CreateConnection;
 use App\Connections\Command\V1\ListConnections;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,19 +18,17 @@ class ApiV1Controller extends AbstractController
 {
     use RequiresMessageBus;
 
+    /** @see \App\Connections\Handler\ListConnections */
     #[Route('', name: 'list', methods: ['GET', 'HEAD'])]
-    public function index(ListConnections $cmd, ListConnectionsJSONResponseBuilder $responseBuilder): JsonResponse
+    public function index(ListConnections $cmd): JsonResponse
     {
-        return $responseBuilder->fromCommandResponse(
-            $this->bus->dispatchAndGetResult($cmd)
-        );
+        return $this->bus->dispatchAndGetResult($cmd)->json();
     }
 
+    /** @see \App\Connections\Handler\CreateConnection */
     #[Route('', name: 'create', methods: ['POST', 'HEAD'])]
-    public function create(CreateConnection $cmd, CreateConnectionJSONResponseBuilder $responseBuilder): JsonResponse
+    public function create(CreateConnection $cmd): JsonResponse
     {
-        return $responseBuilder->fromCommandResponse(
-            $this->bus->dispatchAndGetResult($cmd)
-        );
+        return $this->bus->dispatchAndGetResult($cmd)->json();
     }
 }

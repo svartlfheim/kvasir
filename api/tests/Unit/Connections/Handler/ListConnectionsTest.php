@@ -2,13 +2,12 @@
 
 namespace App\Tests\Unit\Connections\Handler;
 
-use App\Common\API\Error\FieldValidationError;
 use App\Common\API\Error\FieldValidationErrorList;
-use App\Common\API\Error\Violation;
 use App\Common\API\PaginationData;
 use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\ListConnections;
+use App\Connections\Handler\Response\Factory;
 use App\Connections\Handler\Response\ListConnectionsResponse;
 use App\Connections\Model\ConnectionList;
 use App\Tests\Unit\TestCase;
@@ -21,36 +20,47 @@ class ListConnectionsTest extends TestCase
 {
     public function testSuccessfulHandling(): void
     {
-        $constraintViolationList = $this->buildMockIteratorAggregate(ConstraintViolationList::class, []);
-
         $cmd = $this->createMock(ListConnectionsInterface::class);
-        $cmd->expects($this->exactly(1))->method('getOrderField')->willReturn('somefield');
-        $cmd->expects($this->exactly(1))->method('getOrderDirection')->willReturn('somedir');
+        $cmd->expects($this->exactly(1))->method('getOrderField')->willReturn('myfield');
+        $cmd->expects($this->exactly(1))->method('getOrderDirection')->willReturn('mydirection');
+
+        $mockResponse = $this->createMock(ListConnectionsResponse::class);
+        $mockResponse->expects($this->exactly(1))->method('setCommand')->with($cmd)->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setStatus')->with(ResponseStatus::newOK())->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setConnections')->with($this->isInstanceof(ConnectionList::class))->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setErrors')->with($this->isInstanceOf(FieldValidationErrorList::class))->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setPagination')->with((new PaginationData())->withOrderBy('myfield', 'mydirection'))->willReturn($mockResponse);
+
+        $mockFactory = $this->createMock(Factory::class);
+        $mockFactory->expects($this->exactly(1))->method('make')->with(ListConnectionsResponse::class)->willReturn($mockResponse);
+        $constraintViolationList = $this->buildMockIteratorAggregate(ConstraintViolationList::class, []);
 
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($constraintViolationList);
 
-        $handler = new ListConnections();
+        $handler = new ListConnections($mockFactory);
         $handler->withValidator($validator);
 
-
-        $expectPagination = new PaginationData();
-        $expectPagination->withOrderBy('somefield', 'somedir');
-
-        $this->assertEquals(
-            new ListConnectionsResponse(
-                $cmd,
-                ResponseStatus::newOK(),
-                FieldValidationErrorList::empty(),
-                ConnectionList::empty(),
-                $expectPagination,
-            ),
+        $this->assertSame(
+            $mockResponse,
             $handler($cmd)
         );
     }
 
     public function testValidationErrorHandling(): void
     {
+        $cmd = $this->createMock(ListConnectionsInterface::class);
+
+        $mockResponse = $this->createMock(ListConnectionsResponse::class);
+        $mockResponse->expects($this->exactly(1))->method('setCommand')->with($cmd)->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setStatus')->with(ResponseStatus::newValidationError())->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setConnections')->with($this->isInstanceof(ConnectionList::class))->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setErrors')->with($this->isInstanceOf(FieldValidationErrorList::class))->willReturn($mockResponse);
+        $mockResponse->expects($this->exactly(1))->method('setPagination')->with(new PaginationData())->willReturn($mockResponse);
+
+        $mockFactory = $this->createMock(Factory::class);
+        $mockFactory->expects($this->exactly(1))->method('make')->with(ListConnectionsResponse::class)->willReturn($mockResponse);
+
         $mockConstraintViolation = $this->createMock(ConstraintViolation::class);
         $mockConstraintViolation->expects($this->exactly(1))->method('getPropertyPath')->willReturn('somefield');
         $mockConstraintViolation->expects($this->exactly(1))->method('getMessage')->willReturn('some error');
@@ -58,42 +68,15 @@ class ListConnectionsTest extends TestCase
 
         $constraintViolationList = $this->buildMockIteratorAggregate(ConstraintViolationList::class, [$mockConstraintViolation]);
 
-        $cmd = $this->createMock(ListConnectionsInterface::class);
-
         $validator = $this->createMock(ValidatorInterface::class);
         $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($constraintViolationList);
 
-        $handler = new ListConnections();
+        $handler = new ListConnections($mockFactory);
         $handler->withValidator($validator);
 
-        $expectErrors = FieldValidationErrorList::empty();
-        $expectErrors->add(FieldValidationError::new('somefield', [new Violation('some error', 'type')]));
-
-        $this->assertEquals(
-            new ListConnectionsResponse(
-                $cmd,
-                ResponseStatus::newValidationError(),
-                $expectErrors,
-                ConnectionList::empty(),
-                new PaginationData(),
-            ),
+        $this->assertSame(
+            $mockResponse,
             $handler($cmd)
         );
     }
-
-    // public function testItIsInvokable(): void
-    // {
-    //     $cmd = $this->createMock(ListConnectionsInterface::class);
-    //     $handler = new ListConnections();
-
-    //     $resp = $handler($cmd);
-    //     $this->assertInstanceOf(ListConnectionsResponse::class, $resp);
-    //     $this->assertEquals(ResponseStatus::newOK(), $resp->getStatus());
-    //     $this->assertEquals(ConnectionList::empty(), $resp->getConnections());
-    //     $this->assertSame($cmd, $resp->getCommand());
-    //     $this->assertEquals(
-    //         (new PaginationData())->withOrderBy('name', 'ASC'),
-    //         $resp->getPagination(),
-    //     );
-    // }
 }
