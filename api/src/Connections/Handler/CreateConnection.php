@@ -2,9 +2,8 @@
 
 namespace App\Connections\Handler;
 
-use App\Common\DI\RequiresValidator;
+use App\Common\Command\CommandValidatorInterface;
 use App\Common\Handler\ResponseStatus;
-use App\Common\Handler\ValidatesCommand;
 use App\Connections\Command\CreateConnectionInterface;
 use App\Connections\Handler\Response\CreateConnectionResponse;
 use App\Connections\Handler\Response\Factory;
@@ -13,19 +12,18 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class CreateConnection implements MessageHandlerInterface
 {
-    use RequiresValidator;
-    use ValidatesCommand;
-
+    protected CommandValidatorInterface $commandValidator;
     protected Factory $responseFactory;
 
-    public function __construct(Factory $responseFactory)
+    public function __construct(Factory $responseFactory, CommandValidatorInterface $commandValidator)
     {
         $this->responseFactory = $responseFactory;
+        $this->commandValidator = $commandValidator;
     }
 
     public function __invoke(CreateConnectionInterface $cmd): CreateConnectionResponse
     {
-        $fieldErrors = $this->validateCommand($cmd);
+        $fieldErrors = $this->commandValidator->validate($cmd);
 
         /** @var CreateConnectionResponse */
         $resp = $this->responseFactory->make(CreateConnectionResponse::class)

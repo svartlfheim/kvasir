@@ -4,6 +4,7 @@ namespace App\Tests\Unit\Connections\Handler;
 
 use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\API\PaginationData;
+use App\Common\Command\CommandValidatorInterface;
 use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\ListConnections;
@@ -11,10 +12,6 @@ use App\Connections\Handler\Response\Factory;
 use App\Connections\Handler\Response\ListConnectionsResponse;
 use App\Connections\Model\ConnectionList;
 use App\Tests\Unit\TestCase;
-use Symfony\Component\Validator\Constraints\Type;
-use Symfony\Component\Validator\ConstraintViolation;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ListConnectionsTest extends TestCase
 {
@@ -33,13 +30,14 @@ class ListConnectionsTest extends TestCase
 
         $mockFactory = $this->createMock(Factory::class);
         $mockFactory->expects($this->exactly(1))->method('make')->with(ListConnectionsResponse::class)->willReturn($mockResponse);
-        $constraintViolationList = $this->buildMockIteratorAggregate(ConstraintViolationList::class, []);
 
-        $validator = $this->createMock(ValidatorInterface::class);
-        $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($constraintViolationList);
+        $mockErrors = $this->createMock(FieldValidationErrorList::class);
+        $mockErrors->expects($this->exactly(1))->method('isEmpty')->willReturn(true);
 
-        $handler = new ListConnections($mockFactory);
-        $handler->withValidator($validator);
+        $validator = $this->createMock(CommandValidatorInterface::class);
+        $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($mockErrors);
+
+        $handler = new ListConnections($mockFactory, $validator);
 
         $this->assertSame(
             $mockResponse,
@@ -61,18 +59,13 @@ class ListConnectionsTest extends TestCase
         $mockFactory = $this->createMock(Factory::class);
         $mockFactory->expects($this->exactly(1))->method('make')->with(ListConnectionsResponse::class)->willReturn($mockResponse);
 
-        $mockConstraintViolation = $this->createMock(ConstraintViolation::class);
-        $mockConstraintViolation->expects($this->exactly(1))->method('getPropertyPath')->willReturn('somefield');
-        $mockConstraintViolation->expects($this->exactly(1))->method('getMessage')->willReturn('some error');
-        $mockConstraintViolation->expects($this->exactly(1))->method('getConstraint')->willReturn(new Type('string'));
+        $mockErrors = $this->createMock(FieldValidationErrorList::class);
+        $mockErrors->expects($this->exactly(1))->method('isEmpty')->willReturn(false);
 
-        $constraintViolationList = $this->buildMockIteratorAggregate(ConstraintViolationList::class, [$mockConstraintViolation]);
+        $validator = $this->createMock(CommandValidatorInterface::class);
+        $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($mockErrors);
 
-        $validator = $this->createMock(ValidatorInterface::class);
-        $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($constraintViolationList);
-
-        $handler = new ListConnections($mockFactory);
-        $handler->withValidator($validator);
+        $handler = new ListConnections($mockFactory, $validator);
 
         $this->assertSame(
             $mockResponse,

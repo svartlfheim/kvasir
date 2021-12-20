@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Common\Handler;
+namespace App\Common\Command;
 
 use App\Common\API\Error\FieldValidationError;
 use App\Common\API\Error\FieldValidationErrorList;
@@ -8,15 +8,18 @@ use App\Common\API\Error\Violation;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-trait ValidatesCommand
+class CommandValidator implements CommandValidatorInterface
 {
-    abstract protected function getValidator(): ValidatorInterface;
+    protected ValidatorInterface $validator;
 
-    protected function validateCommand($cmd): FieldValidationErrorList
+    public function __construct(ValidatorInterface $validator)
     {
-        $validator = $this->getValidator();
+        $this->validator = $validator;
+    }
 
-        $errors = $validator->validate($cmd);
+    public function validate(object $cmd): FieldValidationErrorList
+    {
+        $errors = $this->validator->validate($cmd);
 
         if (empty($errors)) {
             return FieldValidationErrorList::empty();

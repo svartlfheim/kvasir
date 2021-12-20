@@ -3,9 +3,8 @@
 namespace App\Connections\Handler;
 
 use App\Common\API\PaginationData;
-use App\Common\DI\RequiresValidator;
+use App\Common\Command\CommandValidatorInterface;
 use App\Common\Handler\ResponseStatus;
-use App\Common\Handler\ValidatesCommand;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\Response\Factory;
 use App\Connections\Handler\Response\ListConnectionsResponse;
@@ -14,19 +13,19 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class ListConnections implements MessageHandlerInterface
 {
-    use RequiresValidator;
-    use ValidatesCommand;
-
+    protected CommandValidatorInterface $commandValidator;
     protected Factory $responseFactory;
 
-    public function __construct(Factory $responseFactory)
+    public function __construct(Factory $responseFactory, CommandValidatorInterface $commandValidator)
     {
         $this->responseFactory = $responseFactory;
+        $this->commandValidator = $commandValidator;
     }
+
 
     public function __invoke(ListConnectionsInterface $cmd): ListConnectionsResponse
     {
-        $fieldErrors = $this->validateCommand($cmd);
+        $fieldErrors = $this->commandValidator->validate($cmd);
 
         /** @var ListConnectionsResponse */
         $resp = $this->responseFactory->make(ListConnectionsResponse::class)
