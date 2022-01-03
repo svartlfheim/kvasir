@@ -45,7 +45,7 @@ class ConnectionsTest extends TestCase
         $this->assertEquals(Connection::ENGINE_POSTGRES, $dbRows[0]['engine']);
     }
 
-    public function testSaveAndFetch(): void
+    public function testSaveAndById(): void
     {
         $uuidVal = "f9ea8f10-fa6b-40bc-bfe5-e650af76abc2";
         $uuid = Uuid::fromString($uuidVal);
@@ -58,8 +58,19 @@ class ConnectionsTest extends TestCase
         $found = $repo->byId($uuid);
 
         $this->assertEquals((string) $conn->getId(), $found->getId());
-        $this->assertEquals($conn->getEngine(), $found->getEngine() . 'xx');
+        $this->assertEquals($conn->getEngine(), $found->getEngine());
         $this->assertEquals($conn->getName(), $found->getName());
+    }
+
+    public function testByIdForNonExistentConnection(): void
+    {
+        $uuidVal = "f9ea8f10-fa6b-40bc-bfe5-e650af76abc2";
+        $uuid = Uuid::fromString($uuidVal);
+
+        $repo = $this->getService(ConnectionsInterface::class);
+        $found = $repo->byId($uuid);
+
+        $this->assertNull($found);
     }
 
     public function testListing(): void
