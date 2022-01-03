@@ -4,22 +4,22 @@ namespace App\Common\API;
 
 class PaginationData implements JSONSerializableInterface
 {
-    protected ?string $nextToken = null;
-    protected ?string $prevToken = null;
+    protected ?int $page = null;
+    protected ?int $pageSize = null;
     protected ?array $filters = [];
     protected ?string $orderBy = null;
     protected ?string $orderDirection = null;
 
-    public function withNextToken(string $token): self
+    public function withPage(int $page): self
     {
-        $this->nextToken = $token;
+        $this->page = $page;
 
         return $this;
     }
 
-    public function withPreviousToken(string $token): self
+    public function withPageSize(int $pageSize): self
     {
-        $this->prevToken = $token;
+        $this->pageSize = $pageSize;
 
         return $this;
     }
@@ -43,8 +43,8 @@ class PaginationData implements JSONSerializableInterface
     public function toJSON(): array
     {
         return [
-            'next_token' => $this->nextToken,
-            'prev_token' => $this->prevToken,
+            'page' => $this->page,
+            'page_size' => $this->pageSize,
             'order' => [
                 'field' => $this->orderBy,
                 'direction' => $this->orderDirection,

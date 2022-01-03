@@ -53,6 +53,17 @@ class ConnectionList implements Iterator, Countable
         $this->rewind();
     }
 
+    public function toArray(): array
+    {
+        return $this->connections;
+    }
+
+    public function add(self $addition): void
+    {
+        $this->connections = array_merge($this->connections, $addition->toArray());
+        $this->rewind();
+    }
+
     public static function empty(): self
     {
         return new self([]);

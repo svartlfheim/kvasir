@@ -37,12 +37,12 @@ class ListConnectionsTest extends TestCase
         $requestMock->expects($this->exactly(4))
             ->method('get')
             ->withConsecutive(['page_size'], ['page'], ['order_field'], ['order_direction'])
-            ->willReturnOnConsecutiveCalls(10, 'currpage', 'somefield', 'desc');
+            ->willReturnOnConsecutiveCalls(10, 1, 'somefield', 'desc');
 
         $cmd = ListConnections::fromRequest($requestMock);
 
         $this->assertEquals(10, $cmd->getPageSize());
-        $this->assertEquals('currpage', $cmd->getPage());
+        $this->assertEquals(1, $cmd->getPage());
         $this->assertEquals('somefield', $cmd->getOrderField());
         $this->assertEquals('desc', $cmd->getOrderDirection());
     }
@@ -58,7 +58,7 @@ class ListConnectionsTest extends TestCase
         $cmd = ListConnections::fromRequest($requestMock);
 
         $this->assertEquals(20, $cmd->getPageSize());
-        $this->assertEquals('', $cmd->getPage());
+        $this->assertEquals(1, $cmd->getPage());
         $this->assertEquals('name', $cmd->getOrderField());
         $this->assertEquals('asc', $cmd->getOrderDirection());
     }

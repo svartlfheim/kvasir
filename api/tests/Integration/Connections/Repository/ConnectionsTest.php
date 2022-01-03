@@ -2,6 +2,10 @@
 
 namespace App\Tests\Integration\Connections\Repository;
 
+use App\Common\Database\ColumnSortOrder;
+use App\Common\Database\ListOptions;
+use App\Common\Database\Pagination;
+use App\Common\Database\SortOrders;
 use App\Connections\Model\ConnectionList;
 use App\Connections\Model\Entity\Connection;
 use App\Connections\Repository\Connections;
@@ -12,6 +16,24 @@ use Ramsey\Uuid\Uuid;
 
 class ConnectionsTest extends TestCase
 {
+    protected function createConnections(int $total): array
+    {
+        $connections = [];
+
+        // The default pagination size when fetching all is 100
+        for ($i = 0; $i < $total; $i++) {
+            // Choose a random engine from the array
+            $engineKey = rand(
+                0,
+                count(Connection::ENGINES) - 1
+            );
+
+            $connections[] = Connection::create(Uuid::uuid4(), 'connection-' . $i, Connection::ENGINES[$engineKey]);
+        }
+
+        return $connections;
+    }
+
     public function testRepoIsLoadedByInterfaceFromContainer(): void
     {
         $this->assertInstanceOf(
@@ -73,15 +95,35 @@ class ConnectionsTest extends TestCase
         $this->assertNull($found);
     }
 
-    public function testListing(): void
+    public function testListingWithoutPaginationOrSorting(): void
     {
-        // Thee are alphabetically ordered by the name, more test will be needed later when we introduce proper filtering, pagination, and sorting options
+        $connections = $this->createConnections(200);
+
+        $repo = $this->getService(ConnectionsInterface::class);
+
+        foreach ($connections as $connection) {
+            $repo->save($connection);
+        }
+
+        $found = $repo->all(new ListOptions());
+
+        $this->assertInstanceOf(ConnectionList::class, $found);
+
+        foreach ($found as $i => $dbConn) {
+            $this->assertEquals((string) $connections[$i]->getId(), (string) $dbConn->getId(), "Error in row: $i");
+            $this->assertEquals($connections[$i]->getEngine(), $dbConn->getEngine(), "Error in row: $i");
+            $this->assertEquals($connections[$i]->getName(), $dbConn->getName(), "Error in row: $i");
+        }
+    }
+
+    public function testListingWithDescNameSort(): void
+    {
         $connections = [
-            Connection::create(Uuid::fromString("aacbf067-1f77-4214-b049-f4b8264ea7ae"), 'connection-1', Connection::ENGINE_POSTGRES),
-            Connection::create(Uuid::fromString("7330d5f4-f2bb-4c92-9c99-431ee4fcb77a"), 'connection-2', Connection::ENGINE_MYSQL),
-            Connection::create(Uuid::fromString("fe61ddd0-5b20-48b8-b9bc-6ab73c688825"), 'connection-3', Connection::ENGINE_MYSQL),
-            Connection::create(Uuid::fromString("221f8b19-c9e4-4213-8088-a0bb161d22d4"), 'connection-4', Connection::ENGINE_POSTGRES),
-            Connection::create(Uuid::fromString("b21e62dd-cf90-4e87-9644-cc03e978e006"), 'connection-5', Connection::ENGINE_POSTGRES),
+            Connection::create(Uuid::uuid4(), 'connection-1', Connection::ENGINE_MYSQL),
+            Connection::create(Uuid::uuid4(), 'connection-2', Connection::ENGINE_MYSQL),
+            Connection::create(Uuid::uuid4(), 'connection-3', Connection::ENGINE_MYSQL),
+            Connection::create(Uuid::uuid4(), 'connection-4', Connection::ENGINE_MYSQL),
+            Connection::create(Uuid::uuid4(), 'connection-5', Connection::ENGINE_MYSQL),
         ];
 
         $repo = $this->getService(ConnectionsInterface::class);
@@ -90,14 +132,142 @@ class ConnectionsTest extends TestCase
             $repo->save($connection);
         }
 
-        $found = $repo->all();
+        $opts = new ListOptions();
+        $opts->setSortOrders(SortOrders::new(ColumnSortOrder::new('name', ColumnSortOrder::DIRECTION_DESC)));
+        $found = $repo->all($opts);
+
+        $this->assertInstanceOf(ConnectionList::class, $found);
+
+        // They should be sorted the opposite way they were created
+        $connections = array_reverse($connections);
+
+        foreach ($found as $i => $dbConn) {
+            $this->assertEquals((string) $connections[$i]->getId(), (string) $dbConn->getId(), "Error in row: $i");
+            $this->assertEquals($connections[$i]->getEngine(), $dbConn->getEngine(), "Error in row: $i");
+            $this->assertEquals($connections[$i]->getName(), $dbConn->getName(), "Error in row: $i");
+        }
+    }
+
+    public function testListingWithDescNameSortAndEngineSort(): void
+    {
+        $connections = [
+            Connection::create(Uuid::uuid4(), 'connection-1', Connection::ENGINE_MYSQL),
+            Connection::create(Uuid::uuid4(), 'connection-2', Connection::ENGINE_POSTGRES),
+            Connection::create(Uuid::uuid4(), 'connection-3', Connection::ENGINE_POSTGRES),
+            Connection::create(Uuid::uuid4(), 'connection-4', Connection::ENGINE_MYSQL),
+            Connection::create(Uuid::uuid4(), 'connection-5', Connection::ENGINE_MYSQL),
+        ];
+
+        // Sorted firs by engine asc (mysql before postgres)
+        // Then by the name desc (descending index)
+        $expectedOrder = [
+            $connections[4],
+            $connections[3],
+            $connections[0],
+            $connections[2],
+            $connections[1],
+        ];
+        $repo = $this->getService(ConnectionsInterface::class);
+
+        foreach ($connections as $connection) {
+            $repo->save($connection);
+        }
+
+        $opts = new ListOptions();
+        $opts->setSortOrders(
+            SortOrders::new(
+                ColumnSortOrder::new('engine', ColumnSortOrder::DIRECTION_ASC),
+                ColumnSortOrder::new('name', ColumnSortOrder::DIRECTION_DESC),
+            )
+        );
+        $found = $repo->all($opts);
 
         $this->assertInstanceOf(ConnectionList::class, $found);
 
         foreach ($found as $i => $dbConn) {
-            $this->assertEquals((string) $connections[$i]->getId(), $dbConn->getId());
-            $this->assertEquals($connections[$i]->getEngine(), $dbConn->getEngine());
-            $this->assertEquals($connections[$i]->getName(), $dbConn->getName());
+            $this->assertEquals((string) $expectedOrder[$i]->getId(), (string) $dbConn->getId(), "Error in row: $i");
+            $this->assertEquals($expectedOrder[$i]->getEngine(), $dbConn->getEngine(), "Error in row: $i");
+            $this->assertEquals($expectedOrder[$i]->getName(), $dbConn->getName(), "Error in row: $i");
+        }
+    }
+
+    public function testListingForFirstPageOnly(): void
+    {
+        $connections = $this->createConnections(200);
+
+        $repo = $this->getService(ConnectionsInterface::class);
+
+        foreach ($connections as $connection) {
+            $repo->save($connection);
+        }
+
+        $opts = new ListOptions();
+        $opts->setPagination(new Pagination(1, 30));
+
+        $found = $repo->all($opts);
+
+        $expectedConnections = array_slice($connections, 0, 30);
+        $this->assertInstanceOf(ConnectionList::class, $found);
+
+        foreach ($found as $i => $dbConn) {
+            $this->assertEquals((string) $expectedConnections[$i]->getId(), (string) $dbConn->getId(), "Error in row: $i");
+            $this->assertEquals($expectedConnections[$i]->getEngine(), $dbConn->getEngine(), "Error in row: $i");
+            $this->assertEquals($expectedConnections[$i]->getName(), $dbConn->getName(), "Error in row: $i");
+        }
+    }
+
+    public function testListingForThirdPage(): void
+    {
+        $connections = $this->createConnections(200);
+
+        $repo = $this->getService(ConnectionsInterface::class);
+
+        foreach ($connections as $connection) {
+            $repo->save($connection);
+        }
+
+        $opts = new ListOptions();
+        $opts->setPagination(new Pagination(3, 30));
+
+        $found = $repo->all($opts);
+
+        $expectedConnections = array_slice($connections, 60, 30);
+        $this->assertInstanceOf(ConnectionList::class, $found);
+
+        foreach ($found as $i => $dbConn) {
+            $this->assertEquals((string) $expectedConnections[$i]->getId(), (string) $dbConn->getId(), "Error in row: $i");
+            $this->assertEquals($expectedConnections[$i]->getEngine(), $dbConn->getEngine(), "Error in row: $i");
+            $this->assertEquals($expectedConnections[$i]->getName(), $dbConn->getName(), "Error in row: $i");
+        }
+    }
+
+    public function testListingForFirstPageOnlyWithDescNameSort(): void
+    {
+        $connections = $this->createConnections(200);
+
+        $repo = $this->getService(ConnectionsInterface::class);
+
+        foreach ($connections as $connection) {
+            $repo->save($connection);
+        }
+
+        $opts = new ListOptions();
+        $opts->setPagination(new Pagination(1, 30))
+            ->setSortOrders(SortOrders::new(ColumnSortOrder::new('name', ColumnSortOrder::DIRECTION_DESC)));
+
+        $found = $repo->all($opts);
+
+        $expectedConnections = array_slice(
+            array_reverse($connections),
+            0,
+            30
+        );
+        $this->assertInstanceOf(ConnectionList::class, $found);
+
+        foreach ($found as $i => $dbConn) {
+            $this->assertEquals((string) $expectedConnections[$i]->getId(), (string) $dbConn->getId(), "Error in row: $i");
+            $this->assertEquals($expectedConnections[$i]->getEngine(), $dbConn->getEngine(), "Error in row: $i");
+            $this->assertEquals($expectedConnections[$i]->getName(), $dbConn->getName(), "Error in row: $i");
         }
     }
 }

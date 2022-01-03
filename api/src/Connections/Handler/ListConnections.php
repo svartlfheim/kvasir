@@ -4,6 +4,9 @@ namespace App\Connections\Handler;
 
 use App\Common\API\PaginationData;
 use App\Common\Command\CommandValidatorInterface;
+use App\Common\Database\ColumnSortOrder;
+use App\Common\Database\ListOptions;
+use App\Common\Database\Pagination;
 use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\Response\Factory;
@@ -25,7 +28,6 @@ class ListConnections implements MessageHandlerInterface
         $this->repo = $repo;
     }
 
-
     public function __invoke(ListConnectionsInterface $cmd): ListConnectionsResponse
     {
         $fieldErrors = $this->commandValidator->validate($cmd);
@@ -41,11 +43,23 @@ class ListConnections implements MessageHandlerInterface
                 ->setStatus(ResponseStatus::newValidationError());
         }
 
-        $conns = $this->repo->all();
-        $pagination = (new PaginationData())->withOrderBy(
-            $cmd->getOrderField(),
-            $cmd->getOrderDirection(),
-        );
+        $orderField = $cmd->getOrderField();
+        $orderDirection = $cmd->getOrderDirection();
+        $page = $cmd->getPage();
+        $pageSize = $cmd->getPageSize();
+
+        $listOpts = (new ListOptions())
+            ->addSortOrder(ColumnSortOrder::new($orderField, $orderDirection))
+            ->setPagination(new Pagination($page, $pageSize));
+
+        $conns = $this->repo->all($listOpts);
+        $pagination = (new PaginationData())
+            ->withPage($page)
+            ->withPageSize($pageSize)
+            ->withOrderBy(
+                $orderField,
+                $orderDirection,
+            );
 
         return $resp->setConnections($conns)
             ->setPagination($pagination)

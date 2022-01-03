@@ -12,7 +12,7 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
 {
     /** @todo: Add an integration tests for the validation */
 
-    #[Assert\Type('int')]
+    #[Assert\Type('numeric')]
     #[Assert\Range(
         min: 10,
         max: 100,
@@ -20,7 +20,7 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
     #[HTTPField('page_size')]
     protected $pageSize;
 
-    #[Assert\Type('int')]
+    #[Assert\Type('numeric')]
     protected $page;
 
     #[Assert\Type('string')]
@@ -29,7 +29,7 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
     protected $orderField;
 
     #[Assert\Type('string')]
-    #[Assert\Choice(['asc', 'desc'])]
+    #[Assert\Choice(['ASC', 'DESC'])]
     #[HTTPField('order_direction')]
     protected $orderDirection;
 
@@ -48,12 +48,20 @@ class ListConnections implements FromRequestInterface, ListConnectionsInterface
 
     public function getPageSize(): int
     {
-        return $this->pageSize ?? 20;
+        if ($this->pageSize) {
+            return (int) $this->pageSize;
+        }
+
+        return 20;
     }
 
-    public function getPage(): string
+    public function getPage(): int
     {
-        return $this->page ?? '';
+        if ($this->page) {
+            return (int) $this->page;
+        }
+
+        return 1;
     }
 
     public function getOrderField(): string

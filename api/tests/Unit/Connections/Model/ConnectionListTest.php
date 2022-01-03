@@ -38,6 +38,45 @@ class ConnectionListTest extends TestCase
         $this->assertEquals(2, count($connList));
     }
 
+    public function testConvertsToArray(): void
+    {
+        $mockConn1 = $this->createMock(Connection::class);
+        $mockConn2 = $this->createMock(Connection::class);
+        $conns = [
+            $mockConn1,
+            $mockConn2,
+        ];
+        $connList = ConnectionList::fromArray($conns);
+
+        $this->assertEquals($conns, $connList->toArray());
+    }
+
+    public function testAddAnotherList(): void
+    {
+        $mockConn1 = $this->createMock(Connection::class);
+        $mockConn2 = $this->createMock(Connection::class);
+        $mockConn3 = $this->createMock(Connection::class);
+        $mockConn4 = $this->createMock(Connection::class);
+        $conns1 = [
+            $mockConn1,
+            $mockConn2,
+        ];
+        $conns2 = [
+            $mockConn3,
+            $mockConn4,
+        ];
+        $connList1 = ConnectionList::fromArray($conns1);
+        $connList2 = ConnectionList::fromArray($conns2);
+
+        $connList1->add($connList2);
+        $this->assertEquals([
+            $mockConn1,
+            $mockConn2,
+            $mockConn3,
+            $mockConn4,
+        ], $connList1->toArray());
+    }
+
     public function testConstructFromArrayIsGuarded(): void
     {
         $mockConn = $this->createMock(Connection::class);

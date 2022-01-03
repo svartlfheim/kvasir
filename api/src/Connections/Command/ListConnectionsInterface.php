@@ -8,7 +8,7 @@ interface ListConnectionsInterface
 
     public function getPageSize(): int;
 
-    public function getPage(): string;
+    public function getPage(): int;
 
     public function getOrderField(): string;
 

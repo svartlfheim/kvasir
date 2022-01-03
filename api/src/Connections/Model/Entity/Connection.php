@@ -6,6 +6,11 @@ use Ramsey\Uuid\UuidInterface;
 
 class Connection
 {
+    public const NATURALLY_SORTED_PROPERTIES = [
+        'name',
+        'engine',
+    ];
+
     public const ENGINE_MYSQL = 'mysql';
     public const ENGINE_POSTGRES = 'postgresql';
 

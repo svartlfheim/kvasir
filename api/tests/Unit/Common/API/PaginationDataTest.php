@@ -11,8 +11,8 @@ class PaginationDataTest extends TestCase
     {
         $pData = new PaginationData();
         $this->assertEquals([
-            'next_token' => null,
-            'prev_token' => null,
+            'page' => null,
+            'page_size' => null,
             'order' => [
                 'field' => null,
                 'direction' => null,
@@ -24,14 +24,14 @@ class PaginationDataTest extends TestCase
     public function testAllPropertiesCanBeAdded(): void
     {
         $pData = new PaginationData();
-        $pData->withNextToken('nextpage')
-            ->withPreviousToken('prevpage')
+        $pData->withPage(1)
+            ->withPageSize(20)
             ->withFilters(['myfield' => 'somevalue'])
             ->withOrderBy('myfield', 'mydirection');
 
         $this->assertEquals([
-            'next_token' => 'nextpage',
-            'prev_token' => 'prevpage',
+            'page' => 1,
+            'page_size' => 20,
             'order' => [
                 'field' => 'myfield',
                 'direction' => 'mydirection',
@@ -45,19 +45,19 @@ class PaginationDataTest extends TestCase
     public function testAllPropertiesAreOverriddenOnSubsequentCalls(): void
     {
         $pData = new PaginationData();
-        $pData->withNextToken('nextpage')
-            ->withPreviousToken('prevpage')
+        $pData->withPage(1)
+            ->withPageSize(20)
             ->withFilters(['myfield' => 'somevalue'])
             ->withOrderBy('myfield', 'mydirection');
 
-        $pData->withNextToken('othernextpage')
-            ->withPreviousToken('otherprevpage')
+        $pData->withPage(2)
+            ->withPageSize(30)
             ->withFilters(['otherfield' => 'othervalue'])
             ->withOrderBy('otherfield', 'otherdirection');
 
         $this->assertEquals([
-            'next_token' => 'othernextpage',
-            'prev_token' => 'otherprevpage',
+            'page' => 2,
+            'page_size' => 30,
             'order' => [
                 'field' => 'otherfield',
                 'direction' => 'otherdirection',

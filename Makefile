@@ -50,13 +50,20 @@ build-php-fpm: ## Builds the php-fpm images (including cron and dev variants)
 local-build: ## Builds all images required by the local docker-compose environment
 	$(DOCKER_COMPOSE) build
 
-.PHONY: up
-up: ## Starts up the local docker-compose environments
+.PHONY: dockerup
+dockerup:
 	$(DOCKER_COMPOSE) up -d
+
+.PHONY: dockerup api-migrate
+up: ## Starts up the local docker-compose environments
 
 .PHONY: api-exec
 api-exec: ## Open a shell in the php service (for running console commands and such)
 	$(DOCKER_COMPOSE) exec phpfpm /bin/bash
+
+.PHONY: api-migrate
+api-migrate:
+	$(DOCKER_COMPOSE) exec phpfpm bin/console doctrine:migrations:migrate --no-interaction
 
 .PHONY: down
 down: ## Stops the local docker-compose environment
@@ -69,6 +76,9 @@ api-utest: ## Run unit tests for API
 .PHONY: api-itest
 api-itest: ## Run integration tests for API
 	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite integration $(ARGS)
+
+.PHONY: api-test
+api-test: api-utest api-itest ## Run all tests for API
 
 .PHONY: api-lint
 api-lint: ## Run cs fixer on api codebase

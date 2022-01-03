@@ -5,6 +5,10 @@ namespace App\Tests\Unit\Connections\Handler;
 use App\Common\API\Error\FieldValidationErrorList;
 use App\Common\API\PaginationData;
 use App\Common\Command\CommandValidatorInterface;
+use App\Common\Database\ColumnSortOrder;
+use App\Common\Database\ListOptions;
+use App\Common\Database\Pagination;
+use App\Common\Database\SortOrders;
 use App\Common\Handler\ResponseStatus;
 use App\Connections\Command\ListConnectionsInterface;
 use App\Connections\Handler\ListConnections;
@@ -20,7 +24,9 @@ class ListConnectionsTest extends TestCase
     {
         $cmd = $this->createMock(ListConnectionsInterface::class);
         $cmd->expects($this->exactly(1))->method('getOrderField')->willReturn('myfield');
-        $cmd->expects($this->exactly(1))->method('getOrderDirection')->willReturn('mydirection');
+        $cmd->expects($this->exactly(1))->method('getOrderDirection')->willReturn(ColumnSortOrder::DIRECTION_ASC);
+        $cmd->expects($this->exactly(1))->method('getPage')->willReturn(1);
+        $cmd->expects($this->exactly(1))->method('getPageSize')->willReturn(20);
 
         $mockConnList = $this->createMock(ConnectionList::class);
 
@@ -29,7 +35,11 @@ class ListConnectionsTest extends TestCase
         $mockResponse->expects($this->exactly(1))->method('setStatus')->with(ResponseStatus::newOK())->willReturn($mockResponse);
         $mockResponse->expects($this->exactly(1))->method('setConnections')->with($mockConnList)->willReturn($mockResponse);
         $mockResponse->expects($this->exactly(1))->method('setErrors')->with($this->isInstanceOf(FieldValidationErrorList::class))->willReturn($mockResponse);
-        $mockResponse->expects($this->exactly(1))->method('setPagination')->with((new PaginationData())->withOrderBy('myfield', 'mydirection'))->willReturn($mockResponse);
+        $expectedPaginationData = (new PaginationData())
+            ->withOrderBy('myfield', ColumnSortOrder::DIRECTION_ASC)
+            ->withPage(1)
+            ->withPageSize(20);
+        $mockResponse->expects($this->exactly(1))->method('setPagination')->with($expectedPaginationData)->willReturn($mockResponse);
 
         $mockFactory = $this->createMock(Factory::class);
         $mockFactory->expects($this->exactly(1))->method('make')->with(ListConnectionsResponse::class)->willReturn($mockResponse);
@@ -41,7 +51,10 @@ class ListConnectionsTest extends TestCase
         $validator->expects($this->exactly(1))->method('validate')->with($cmd)->willReturn($mockErrors);
 
         $mockRepo = $this->createMock(ConnectionsInterface::class);
-        $mockRepo->expects($this->exactly(1))->method('all')->willReturn($mockConnList);
+        $expectedListOptions = new ListOptions();
+        $expectedListOptions->setPagination(new Pagination(1, 20))
+            ->setSortOrders(SortOrders::new(ColumnSortOrder::new('myfield', ColumnSortOrder::DIRECTION_ASC)));
+        $mockRepo->expects($this->exactly(1))->method('all')->with($expectedListOptions)->willReturn($mockConnList);
 
         $handler = new ListConnections($mockFactory, $validator, $mockRepo);
 
