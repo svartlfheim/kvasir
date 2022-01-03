@@ -66,6 +66,10 @@ down: ## Stops the local docker-compose environment
 api-utest: ## Run unit tests for API
 	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite unit $(ARGS)
 
+.PHONY: api-itest
+api-itest: ## Run integration tests for API
+	$(DOCKER_COMPOSE) exec phpfpm ./bin/phpunit --testsuite integration $(ARGS)
+
 .PHONY: api-lint
 api-lint: ## Run cs fixer on api codebase
 	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --allow-risky yes

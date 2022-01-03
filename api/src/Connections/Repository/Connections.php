@@ -6,6 +6,7 @@ use App\Connections\Model\ConnectionList;
 use App\Connections\Model\Entity\Connection;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Ramsey\Uuid\UuidInterface;
 
 class Connections extends ServiceEntityRepository implements ConnectionsInterface
 {
@@ -22,6 +23,11 @@ class Connections extends ServiceEntityRepository implements ConnectionsInterfac
         $em->flush($conn);
 
         return $conn;
+    }
+
+    public function byId(UuidInterface $id): ?Connection
+    {
+        return $this->find((string) $id);
     }
 
     public function all(): ConnectionList
