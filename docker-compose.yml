@@ -75,3 +75,5 @@ services:
       MYSQL_PASSWORD: ${API_DATABASE_PASS}
       MYSQL_USER: ${API_DATABASE_USER}
       MYSQL_DATABASE: ${API_DATABASE_NAME}
+    volumes:
+      - "./docker/local/mysql:/docker-entrypoint-initdb.d"
