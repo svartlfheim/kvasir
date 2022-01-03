@@ -23,7 +23,6 @@ class MessageBus implements MessageBusInterface
 
     /**
      * @see MessageBusInterface::dispatch
-     * @see MessageBusInterface::dispatch
      */
     public function dispatchAndGetResult(object $message, array $stamps = []): mixed
     {

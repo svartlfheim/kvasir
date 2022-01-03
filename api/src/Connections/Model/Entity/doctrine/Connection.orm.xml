@@ -1,0 +1,12 @@
+<doctrine-mapping>
+    <entity 
+        name="App\Connections\Model\Entity\Connection" 
+        table="connections" 
+        repository-class="App\Connections\Repository\ConnectionRepository"
+    >
+        <id name="id" type="uuid" />
+
+        <field name="name" type="string" length="100" nullable="false" unique="true" />
+        <field name="engine" type="string" length="20" nullable="false" />
+    </entity>
+</doctrine-mapping>

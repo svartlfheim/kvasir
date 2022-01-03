@@ -48,14 +48,14 @@ build-php-fpm: ## Builds the php-fpm images (including cron and dev variants)
 
 .PHONY: local-build
 local-build: ## Builds all images required by the local docker-compose environment
-	$(DOCKER_COMPOSE) build --no-cache
+	$(DOCKER_COMPOSE) build
 
 .PHONY: up
 up: ## Starts up the local docker-compose environments
 	$(DOCKER_COMPOSE) up -d
 
-.PHONY: exec
-exec: ## Open a shell in the php service (for running console commands and such)
+.PHONY: api-exec
+api-exec: ## Open a shell in the php service (for running console commands and such)
 	$(DOCKER_COMPOSE) exec phpfpm /bin/bash
 
 .PHONY: down
@@ -80,6 +80,22 @@ api-stan: ## Run the phpstan analysis on src
 .PHONY: api-csfix
 api-csfix: ## Run cs fixer on api codebase
 	$(DOCKER_COMPOSE) exec phpfpm ./tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --allow-risky yes
+
+.PHONY: postgres-psql
+postgres-psql: ## Start a pgsql session inside the postgres container
+	$(DOCKER_COMPOSE) exec postgres /bin/bash -c "psql -U\$$POSTGRES_USER  \$$POSTGRES_DB"
+
+.PHONY: postgres-bash
+postgres-exec: ## Start a bash shell session inside the postgres container
+	$(DOCKER_COMPOSE) exec postgres bin/bash
+
+.PHONY: mysql-shell
+mysql-shell: ## Start a mysql session inside the mysql container
+	$(DOCKER_COMPOSE) exec mysql /bin/bash -c "mysql -u\$$MYSQL_USER -p\$$MYSQL_PASSWORD \$$MYSQL_DATABASE"
+
+.PHONY: mysql-bash
+mysql-exec: ## Start a bash shell session inside the mysql container
+	$(DOCKER_COMPOSE) exec mysql bin/bash
 
 .PHONY: restart
 restart: down up ## Destroys the environment and then starts it

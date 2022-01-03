@@ -5,6 +5,11 @@ LABEL maintainer="Adam Kirk <adam_kirk@live.co.uk>"
 RUN apt-get update
 RUN apt-get install -y git
 
+# Database drivers
+RUN apt-get install -y libpq-dev
+RUN docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql
+RUN docker-php-ext-install mysqli pdo pdo_mysql pgsql pdo_pgsql
+
 # Require for symfony validators
 RUN apt-get install -y libicu-dev && docker-php-ext-configure intl && docker-php-ext-install intl
 

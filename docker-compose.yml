@@ -49,5 +49,29 @@ services:
       COMPOSER_AUTH: "{\"github-oauth\": {\"github.com\": \"${GITHUB_OAUTH_TOKEN}\"}}"
       # We use this until php-cs-fixer supports symfony 6
       PHP_CS_FIXER_IGNORE_ENV: true
+      DATABASE_NAME: ${API_DATABASE_NAME}
+      DATABASE_HOST: ${API_DATABASE_HOST}
+      DATABASE_PORT: ${API_DATABASE_PORT}
+      DATABASE_USER: ${API_DATABASE_USER}
+      DATABASE_PASS: ${API_DATABASE_PASS}
+      DATABASE_DRIVER: ${API_DATABASE_DRIVER}
+      DATABASE_SERVER_VERSION: ${API_DATABASE_SERVER_VERSION}
     volumes:
       - "./api:${APP_ROOT}"
+
+  postgres:
+    image: postgres:14
+    environment:
+      # PGPASSWORD is used to start non-interactive psql sessions
+      PGPASSWORD: ${API_DATABASE_PASS}
+      POSTGRES_PASSWORD: ${API_DATABASE_PASS}
+      POSTGRES_USER: ${API_DATABASE_USER}
+      POSTGRES_DB: ${API_DATABASE_NAME}
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_PASSWORD: ${API_DATABASE_PASS}
+      MYSQL_USER: ${API_DATABASE_USER}
+      MYSQL_DATABASE: ${API_DATABASE_NAME}

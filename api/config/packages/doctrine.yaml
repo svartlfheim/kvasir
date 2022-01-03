@@ -1,0 +1,26 @@
+doctrine:
+    dbal:
+        dbname: '%rdb_name%'
+        host: '%rdb_host%'
+        port: '%rdb_port%'
+        user: '%rdb_user%'
+        password: '%rdb_password%'
+        # @see https://www.doctrine-project.org/projects/doctrine-dbal/en/current/reference/configuration.html#driver
+        driver: '%rdb_driver%'
+
+        server_version: '%rdb_server_version%'
+
+        types:
+            uuid: App\Common\Doctrine\Type\Uuid
+
+    orm:
+        auto_generate_proxy_classes: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+        auto_mapping: true
+        mappings:
+            Connections:
+                type: xml
+                dir: '%kernel.project_dir%/src/Connections/Model/Entity/doctrine'
+                is_bundle: false
+                prefix: 'App\Connections\Model\Entity'
+                alias: App

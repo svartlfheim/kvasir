@@ -2,6 +2,8 @@
 
 namespace App\Connections\Model\Entity;
 
+use Ramsey\Uuid\UuidInterface;
+
 class Connection
 {
     public const ENGINE_MYSQL = 'mysql';
@@ -12,13 +14,20 @@ class Connection
         self::ENGINE_POSTGRES,
     ];
 
+    protected UuidInterface $id;
     protected string $name;
     protected string $engine;
 
-    protected function __construct(string $name, string $engine)
+    protected function __construct(UuidInterface $id, string $name, string $engine)
     {
+        $this->id = $id;
         $this->name = $name;
         $this->engine = $engine;
+    }
+
+    public function getId(): UuidInterface
+    {
+        return $this->id;
     }
 
     public function getName(): string
@@ -38,11 +47,12 @@ class Connection
         }
     }
 
-    public static function create(string $name, string $engine): self
+    public static function create(UuidInterface $id, string $name, string $engine): self
     {
         self::guardEngine($engine);
 
         return new self(
+            $id,
             $name,
             $engine
         );
