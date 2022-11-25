@@ -54,8 +54,8 @@ local-build: ## Builds all images required by the local docker-compose environme
 dockerup:
 	$(DOCKER_COMPOSE) up -d
 
-.PHONY: dockerup api-migrate
-up: ## Starts up the local docker-compose environments
+.PHONY: up
+up: dockerup api-migrate ## Starts up the local docker-compose environments
 
 .PHONY: api-exec
 api-exec: ## Open a shell in the php service (for running console commands and such)
@@ -89,7 +89,7 @@ lint: api-lint ## Run all linters for the repo
 
 .PHONY: api-stan
 api-stan: ## Run the phpstan analysis on src
-	$(DOCKER_COMPOSE) exec phpfpm vendor/bin/phpstan analyse src
+	$(DOCKER_COMPOSE) exec phpfpm vendor/bin/phpstan analyse -c phpstan.neon
 
 .PHONY: api-csfix
 api-csfix: ## Run cs fixer on api codebase

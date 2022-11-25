@@ -41,6 +41,16 @@ class HTTPResponseBuilder
 
         foreach ($errors as $error) {
             $key = $error->getFieldName();
+            if (! $cmdReflection->hasProperty($key)) {
+                // This would mean it was a rule on a class level.
+                // We'll always map these to the reserved '_composites' field name.
+                $mapped->add(
+                    FieldValidationError::new('_composites', $error->getViolations())
+                );
+
+                continue;
+            }
+
             $prop = $cmdReflection->getProperty($key);
 
             /** @var $attributes []ReflectionAttribute */

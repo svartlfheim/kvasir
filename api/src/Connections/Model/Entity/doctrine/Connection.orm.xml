@@ -2,7 +2,7 @@
     <entity 
         name="App\Connections\Model\Entity\Connection" 
         table="connections" 
-        repository-class="App\Connections\Repository\ConnectionRepository"
+        repository-class="App\Connections\Repository\Connections"
     >
         <id name="id" type="uuid" />
 

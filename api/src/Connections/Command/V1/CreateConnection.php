@@ -3,10 +3,18 @@
 namespace App\Connections\Command\V1;
 
 use App\Common\Command\FromRequestInterface;
+use App\Common\Validation\UniqueRecord;
+use App\Common\Validation\UniqueRecordMode;
 use App\Connections\Command\CreateConnectionInterface;
+use App\Connections\Model\Entity\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueRecord(
+    entityClass: Connection::class,
+    mode: UniqueRecordMode::CREATE,
+    fields: ['name'],
+)]
 class CreateConnection implements FromRequestInterface, CreateConnectionInterface
 {
     /** @todo: Add an integration tests for the validation */
