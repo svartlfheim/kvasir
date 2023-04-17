@@ -1,0 +1,6 @@
+tls:
+  stores:
+    default: {}
+  certificates:
+    - certFile: /certs/kvasir.local/cert.pem
+      keyFile: /certs/kvasir.local/key.pem
